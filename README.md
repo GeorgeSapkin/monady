@@ -9,7 +9,7 @@ Composable monads for functional async flow
 
 ## Examples
 
-Example using generator functions with koajs/koa and ramda/ramda for compose
+Example using generator functions with [koa](https://github.com/koajs/koa) and [ramda](https://github.com/ramda/ramda) for compose
 and curry:
 
 ```js
