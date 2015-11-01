@@ -1,5 +1,7 @@
 # monady
 
+[![Build status][travis-image]][travis-url]
+
 Composable monads for functional async flow
 
 ## Examples
@@ -34,4 +36,7 @@ function* (next) {
 
 ## License
 
-  MIT
+MIT
+
+[travis-image]: https://img.shields.io/travis/GeorgeSapkin/monady.svg?style=flat-square
+[travis-url]: https://travis-ci.org/GeorgeSapkin/monady
