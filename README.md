@@ -1,6 +1,9 @@
 # monady
 
+[![NPM version][npm-image]][npm-url]
 [![Build status][travis-image]][travis-url]
+[![Test coverage][coveralls-image]][coveralls-url]
+[![Downloads][downloads-image]][downloads-url]
 
 Composable monads for functional async flow
 
@@ -38,5 +41,11 @@ function* (next) {
 
 MIT
 
+[npm-image]: https://img.shields.io/npm/v/monady.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/monady
 [travis-image]: https://img.shields.io/travis/GeorgeSapkin/monady.svg?style=flat-square
 [travis-url]: https://travis-ci.org/GeorgeSapkin/monady
+[coveralls-image]: https://img.shields.io/coveralls/GeorgeSapkin/monady.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/r/GeorgeSapkin/monady
+[downloads-image]: http://img.shields.io/npm/dm/monady.svg?style=flat-square
+[downloads-url]: https://npmjs.org/package/monady
