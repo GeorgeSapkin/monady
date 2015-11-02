@@ -1,118 +1,176 @@
 'use strict'
 
 const assert = require('assert');
+const co     = require('co');
+const R      = require('ramda');
 
 const F = require('..');
 
+const maybe      = F.maybe;
+const nothing    = F.nothing;
+const RejectWhen = F.RejectWhen;
+const rejectWhen = F.rejectWhen;
+
 describe('RejectWhen', function(){
     describe('call constructor', () => {
-        describe('with all arguments', () => {
-            it('should work', () => {
+        describe('should work', () => {
+            it('with all arguments', () => {
                 assert.doesNotThrow(
-                    () => new F.RejectWhen(() => {}, () => {}, 5));
+                    () => new RejectWhen(() => {}, () => {}, 5));
             });
         });
 
-        describe('with no arguments', () => {
-            it('should throw', () => {
-                assert.throws(() => new F.RejectWhen());
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => new RejectWhen());
             });
-        });
 
-        describe('with bad when', () => {
-            it('should throw', () => {
-                assert.throws(() => new F.RejectWhen(5));
+            it('with bad when', () => {
+                assert.throws(() => new RejectWhen(5));
             });
-        });
 
-        describe('with bad error', () => {
-            it('should throw', () => {
-                assert.throws(() => new F.RejectWhen(() => {}, 5));
+            it('with bad error', () => {
+                assert.throws(() => new RejectWhen(() => {}, 5));
             });
         });
     });
 
     describe('create through factory method', () => {
-        describe('with all arguments', () => {
-            it('should work', () => {
+        describe('should work', () => {
+            it('with all arguments', () => {
                 assert.doesNotThrow(
-                    () => F.rejectWhen(() => {}, () => {}, 5));
+                    () => rejectWhen(() => {}, () => {}, 5));
             });
         });
 
-        describe('with no arguments', () => {
-            it('should throw', () => {
-                assert.throws(() => F.rejectWhen());
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => rejectWhen());
             });
-        });
 
-        describe('with bad when', () => {
-            it('should throw', () => {
-                assert.throws(() => F.rejectWhen(5));
+            it('with bad when', () => {
+                assert.throws(() => rejectWhen(5));
             });
-        });
 
-        describe('with bad error', () => {
-            it('should throw', () => {
-                assert.throws(() => F.rejectWhen(() => {}, 5));
+            it('with bad error', () => {
+                assert.throws(() => rejectWhen(() => {}, 5));
             });
         });
     });
 
-    describe('call then', () => {
-        function getRejectWhenNothing(val) {
-            return F.rejectWhen(
-                a => a === F.nothing,
-                () => new Error(),
-                val);
-        }
+    const rejectWhenNothing = R.curry(rejectWhen)(
+        val => val === nothing,
+        ()  => new Error('value rejected'));
 
-        describe('when not nothing', () => {
-            it('should transform and value is same', () => {
+    describe('call then', () => {
+        describe('should transform and value is same', () => {
+            it('when not nothing', () => {
                 assert.doesNotThrow(
-                    () => getRejectWhenNothing(5).then(
+                    () => rejectWhenNothing(5).then(
                         val => assert.equal(val, 5),
                         err => assert.ifError(err)
                     ));
             });
-        });
 
-        describe('when Promise resolves to not nothing', () => {
-            it('should transform and value is same', () => {
-                return getRejectWhenNothing(Promise.resolve(5)).then(
+            it('when Promise resolves to not nothing', () => {
+                return rejectWhenNothing(Promise.resolve(5)).then(
                     val => assert.equal(val, 5),
                     err => assert.ifError(err)
                 );
             });
         });
 
-        describe('when nothing', () => {
-            it('should reject', () => {
+        describe('should reject', () => {
+            it('when nothing', () => {
                 assert.doesNotThrow(
-                    () => getRejectWhenNothing(F.nothing).then(
+                    () => rejectWhenNothing(nothing).then(
+                        val => assert(false),
+                        err => assert(err instanceof Error)
+                    ));
+            });
+
+            it('when maybe nothing', () => {
+                assert.doesNotThrow(
+                    () => rejectWhenNothing(maybe(nothing)).then(
                         val => assert(false),
                         err => assert(err instanceof Error)
                     ));
             });
         });
 
-        describe('with no arguments', () => {
-            it('should throw', () => {
-                assert.throws(() => getRejectWhenNothing(5).then());
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => rejectWhenNothing(5).then());
             });
-        });
 
-        describe('with bad transform', () => {
-            it('should throw', () => {
-                assert.throws(() => getRejectWhenNothing(5).then(1));
+            it('with bad transform', () => {
+                assert.throws(() => rejectWhenNothing(5).then(1));
             });
-        });
 
-        describe('with bad reject', () => {
-            it('should throw', () => {
-                assert.throws(() => getRejectWhenNothing(5).then(
+            it('with bad reject', () => {
+                assert.throws(() => rejectWhenNothing(5).then(
                     val => assert.equal(val, 5),
                     1));
+            });
+        });
+    });
+
+    describe('function*', () => {
+        describe('should yield same value', () => {
+            it('when not nothing', () => {
+                return co(function* () {
+                    return rejectWhenNothing(maybe(5));
+                }).then(
+                    val => assert.strictEqual(val, 5),
+                    err => assert.ifError(err)
+                );
+            });
+
+            it('when Promise resolves to not nothing', () => {
+                return co(function* () {
+                    return rejectWhenNothing(maybe(Promise.resolve(5)));
+                }).then(
+                    val => assert.strictEqual(val, 5),
+                    err => assert.ifError(err)
+                );
+            });
+        });
+
+        describe('should reject', () => {
+            it('when nothing', () => {
+                return co(function* () {
+                    return rejectWhenNothing(nothing);
+                }).then(
+                    val => assert(false),
+                    err => assert(err instanceof Error)
+                );
+            });
+
+            it('when maybe nothing', () => {
+                return co(function* () {
+                    return rejectWhenNothing(maybe(nothing));
+                }).then(
+                    val => assert(false),
+                    err => assert(err instanceof Error)
+                );
+            });
+
+            it('when Promise resolves to nothing', () => {
+                return co(function* () {
+                    return rejectWhenNothing(Promise.resolve(nothing));
+                }).then(
+                    val => assert(false),
+                    err => assert(err instanceof Error)
+                );
+            });
+
+            it('when Promise resolves to maybe nothing', () => {
+                return co(function* () {
+                    return rejectWhenNothing(Promise.resolve(maybe(nothing)));
+                }).then(
+                    val => assert(false),
+                    err => assert(err instanceof Error)
+                );
             });
         });
     });
