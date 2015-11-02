@@ -68,7 +68,7 @@ function isPromise(val) {
 class Maybe {
     constructor(val) {
         // catches both undefined and null
-        return val != null ? just(val) : nothing;
+        return val != null && val !== nothing ? just(val) : nothing;
     }
 }
 

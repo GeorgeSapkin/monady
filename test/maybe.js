@@ -16,7 +16,7 @@ describe('Maybe', function(){
     describe('call constructor', () => {
         it('should work', () => {
             assert.doesNotThrow(() => new Maybe(), TypeError);
-        })
+        });
     });
 
     describe('create through factory method', () => {
@@ -25,21 +25,27 @@ describe('Maybe', function(){
                 const m = maybe(5);
                 assert(m instanceof Just);
                 assert.equal(m.value, 5);
-            })
+            });
         });
 
         describe('should return Nothing', () => {
+            it('with nothing', () => {
+                const m = maybe(nothing);
+                assert(m instanceof Nothing);
+                assert.equal(m, nothing);
+            });
+
             it('with null', () => {
                 const m = maybe(null);
                 assert(m instanceof Nothing);
                 assert.equal(m, nothing);
-            })
+            });
 
             it('with no args', () => {
                 const m = maybe();
                 assert(m instanceof Nothing);
                 assert.equal(m, nothing);
-            })
+            });
         });
 
         describe('should resolve to same value', () => {
@@ -47,7 +53,7 @@ describe('Maybe', function(){
                 return maybe(Promise.resolve(5)).then(r => {
                     assert.equal(r, 5);
                 });
-            })
+            });
         });
 
         describe('should resolve to Nothing', () => {
@@ -56,35 +62,35 @@ describe('Maybe', function(){
                     assert(r instanceof Nothing);
                     assert.equal(r, nothing);
                 });
-            })
+            });
 
             it('with resolved Promise with null', () => {
                 return maybe(Promise.resolve(nothing)).then(r => {
                     assert(r instanceof Nothing);
                     assert.equal(r, nothing);
                 });
-            })
+            });
 
             it('with resolved Promise with no args', () => {
                 return maybe(Promise.resolve(nothing)).then(r => {
                     assert(r instanceof Nothing);
                     assert.equal(r, nothing);
                 });
-            })
+            });
 
             it('with resolved Promise with maybe nothing', () => {
                 return maybe(Promise.resolve(maybe(nothing))).then(r => {
                     assert(r instanceof Nothing);
                     assert.equal(r, nothing);
                 });
-            })
+            });
 
             it('with rejected Promise', () => {
                 return maybe(Promise.reject(5)).then(r => {
                     assert(r instanceof Nothing);
                     assert.equal(r, nothing);
                 });
-            })
+            });
         });
     });
 
