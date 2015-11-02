@@ -1,72 +1,94 @@
 'use strict'
 
 const assert = require('assert');
+const co     = require('co');
 
 const F = require('..');
 
+const Either = F.Either;
+const either = F.either;
+
 describe('Either', () => {
     describe('call constructor', () => {
-        describe('with left', () => {
-            it('should work', () => {
+        describe('should work', () => {
+            it('with left', () => {
                 assert.doesNotThrow(() => new F.Either(5));
             });
-        });
 
-        describe('with left and right', () => {
-            it('should work', () => {
+            it('with left and right', () => {
                 assert.doesNotThrow(() => new F.Either(5, 7));
             });
         });
 
-        describe('without any value', () => {
-            it('should throw', () => {
+        describe('should throw', () => {
+            it('without any value', () => {
                 assert.throws(() => new F.Either());
             });
         });
     });
 
     describe('create through factory method', () => {
-        describe('with left', () => {
-            it('should work', () => {
-                assert.doesNotThrow(() => F.either(5));
+        describe('should work', () => {
+            it('with left', () => {
+                assert.doesNotThrow(() => either(5));
+            });
+
+            it('with left and right', () => {
+                assert.doesNotThrow(() => either(5, 7));
             });
         });
 
-        describe('with left and right', () => {
-            it('should work', () => {
-                assert.doesNotThrow(() => F.either(5, 7));
-            });
-        });
-
-        describe('without any value', () => {
-            it('should throw', () => {
-                assert.throws(() => F.either());
+        describe('should throw', () => {
+            it('without any value', () => {
+                assert.throws(() => either());
             });
         });
     });
 
     describe('get value', () => {
         it('should return left', () => {
-            assert.equal(F.either(5).value, 5);
+            assert.equal(either(5).value, 5);
         });
         it('should return right', () => {
-            assert.equal(F.either(5, 7).value, 7);
+            assert.equal(either(5, 7).value, 7);
         });
     });
 
     describe('call then', () => {
         describe('with transform', () => {
             it('should transform left', () => {
-                assert.equal(F.either(5).then(a => a + 3), 8);
+                assert.equal(either(5).then(a => a + 3), 8);
             });
             it('should transform right', () => {
-                assert.equal(F.either(5, 7).then(a => a + 3), 10);
+                assert.equal(either(5, 7).then(a => a + 3), 10);
             });
         });
 
         describe('without transform', () => {
             it('should throw', () => {
-                assert.throws(F.either(5).then);
+                assert.throws(either(5).then);
+            });
+        });
+    });
+
+    describe('function*', () => {
+        describe('should yield same value', () => {
+            it('left', () => {
+                return co(function* () {
+                    return either(5);
+                }).then(
+                    val => assert.strictEqual(val, 5),
+                    err => assert.ifError(err)
+                );
+            });
+
+            it('right', () => {
+                return co(function* () {
+                    return either(5, 7);
+                }).then(
+                    val => assert.strictEqual(val, 7),
+                    err => assert.ifError(err)
+                );
             });
         });
     });
