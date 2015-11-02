@@ -94,34 +94,36 @@ describe('Maybe', function(){
         });
     });
 
-    describe('should yield same value', () => {
-        it('when not nothing', () => {
-            return co(function* () {
-                return maybe(5);
-            }).then(
-                val => assert.strictEqual(val, 5),
-                err => assert.ifError(err)
-            );
-        });
-    });
-
-    describe('should yield nothing', () => {
-        it('when nothing', () => {
-            return co(function* () {
-                return maybe(nothing);
-            }).then(
-                val => assert.equal(val, nothing),
-                err => assert.ifError(err)
-            );
+    describe('function*', () => {
+        describe('should yield same value', () => {
+            it('when not nothing', () => {
+                return co(function* () {
+                    return maybe(5);
+                }).then(
+                    val => assert.strictEqual(val, 5),
+                    err => assert.ifError(err)
+                );
+            });
         });
 
-        it('when maybe nothing', () => {
-            return co(function* () {
-                return maybe(maybe(nothing));
-            }).then(
-                val => assert.equal(val, nothing),
-                err => assert.ifError(err)
-            );
+        describe('should yield nothing', () => {
+            it('when nothing', () => {
+                return co(function* () {
+                    return maybe(nothing);
+                }).then(
+                    val => assert.equal(val, nothing),
+                    err => assert.ifError(err)
+                );
+            });
+
+            it('when maybe nothing', () => {
+                return co(function* () {
+                    return maybe(maybe(nothing));
+                }).then(
+                    val => assert.equal(val, nothing),
+                    err => assert.ifError(err)
+                );
+            });
         });
     });
 });

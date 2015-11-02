@@ -27,14 +27,16 @@ describe('Nothing', () => {
         })
     });
 
-    describe('should yield nothing', () => {
-        it('when nothing', () => {
-            return co(function* () {
-                return nothing;
-            }).then(
-                val => assert.equal(val, nothing),
-                err => assert.ifError(err)
-            );
+    describe('function*', () => {
+        describe('should yield nothing', () => {
+            it('when nothing', () => {
+                return co(function* () {
+                    return nothing;
+                }).then(
+                    val => assert.equal(val, nothing),
+                    err => assert.ifError(err)
+                );
+            });
         });
     });
 });
