@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const assert = require('assert');
 
@@ -6,9 +6,9 @@ class MonadBase {
     constructor() {
         // ES6 alternative new.target
         assert.notStrictEqual(this.constructor, MonadBase,
-            "Cannot construct MonadBase instances directly");
+            'Cannot construct MonadBase instances directly');
 
-        assert(this.bind instanceof Function, "Must override bind method");
+        assert(this.bind instanceof Function, 'Must override bind method');
     }
 
     // emulate Promise API
@@ -34,7 +34,7 @@ class Identity extends MonadBase {
     }
 
     toString() { return this.value; }
-};
+}
 
 function identity(val) {
     return new Identity(val);
@@ -45,14 +45,14 @@ module.exports.identity = identity;
 
 class Nothing {
     toString() { return this.constructor.name; }
-};
+}
 
 const nothing = new Nothing();
 
 module.exports.Nothing = Nothing;
 module.exports.nothing = nothing;
 
-class Just extends Identity {};
+class Just extends Identity {}
 
 function just(val) { return new Just(val); }
 
@@ -74,7 +74,7 @@ class Maybe {
 
 function maybe(val) {
     if (isPromise(val))
-        return val.then(result => maybe(result), err => nothing);
+        return val.then(result => maybe(result), () => nothing);
     return new Maybe(val);
 }
 
@@ -103,7 +103,7 @@ class Either extends MonadBase {
     }
 
     toString() { return this.value; }
-};
+}
 
 function either(left, right) { return new Either(left, right); }
 
@@ -112,8 +112,8 @@ module.exports.either = either;
 
 class RejectWhen extends Identity {
     constructor(when, error, value) {
-        assert(when instanceof Function, "when must be a function");
-        assert(error instanceof Function, "error must be a function");
+        assert(when instanceof Function, 'when must be a function');
+        assert(error instanceof Function, 'error must be a function');
 
         super(value);
         this.when  = when;
@@ -121,8 +121,8 @@ class RejectWhen extends Identity {
     }
 
     bind(transform, reject) {
-        assert(transform instanceof Function, "transform must be a function");
-        assert(reject instanceof Function, "reject must be a function");
+        assert(transform instanceof Function, 'transform must be a function');
+        assert(reject instanceof Function, 'reject must be a function');
 
         const value = this.value;
         const when  = this.when;
@@ -138,7 +138,7 @@ class RejectWhen extends Identity {
 
         return map(transform, reject, value);
     }
-};
+}
 
 function rejectWhen(when, error, value) {
     return new RejectWhen(when, error, value);
@@ -148,12 +148,12 @@ module.exports.RejectWhen = RejectWhen;
 module.exports.rejectWhen = rejectWhen;
 
 function map(transform, reject, obj) {
-    assert(transform instanceof Function, "transform must be a function");
-    assert(reject instanceof Function, "reject must be a function");
+    assert(transform instanceof Function, 'transform must be a function');
+    assert(reject instanceof Function, 'reject must be a function');
 
-    if (obj.bind !== undefined)
+    if (obj.bind)
         return obj.bind(transform, reject);
-    if (obj.then !== undefined)
+    if (obj.then)
         return obj.then(transform, reject);
     return transform(obj);
 }

@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const assert = require('assert');
 const co     = require('co');
@@ -12,19 +12,19 @@ describe('Nothing', () => {
     describe('call constructor', () => {
         it('should work', () => {
             assert.doesNotThrow(() => new Nothing(), TypeError);
-        })
+        });
     });
 
     describe('read predefined constant', () => {
         it('should work', () => {
             assert.notEqual(nothing, null);
-        })
+        });
     });
 
     describe('call then', () => {
         it('should fail', () => {
             assert.throws(() => nothing.then(a => a), TypeError);
-        })
+        });
     });
 
     describe('function*', () => {

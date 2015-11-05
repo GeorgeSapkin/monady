@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const assert = require('assert');
 const co     = require('co');
@@ -12,17 +12,17 @@ describe('Either', () => {
     describe('call constructor', () => {
         describe('should work', () => {
             it('with left', () => {
-                assert.doesNotThrow(() => new F.Either(5));
+                assert.doesNotThrow(() => new Either(5));
             });
 
             it('with left and right', () => {
-                assert.doesNotThrow(() => new F.Either(5, 7));
+                assert.doesNotThrow(() => new Either(5, 7));
             });
         });
 
         describe('should throw', () => {
             it('without any value', () => {
-                assert.throws(() => new F.Either());
+                assert.throws(() => new Either());
             });
         });
     });

@@ -1,18 +1,17 @@
-'use strict'
+'use strict';
 
 const assert = require('assert');
 const co     = require('co');
 
 const F = require('..');
 
-const Just   = F.Just;
-const just   = F.just;
+const Just    = F.Just;
 const Maybe   = F.Maybe;
 const maybe   = F.maybe;
 const Nothing = F.Nothing;
 const nothing = F.nothing;
 
-describe('Maybe', function(){
+describe('Maybe', () => {
     describe('call constructor', () => {
         it('should work', () => {
             assert.doesNotThrow(() => new Maybe(), TypeError);

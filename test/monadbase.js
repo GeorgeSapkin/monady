@@ -1,12 +1,14 @@
-'use strict'
+'use strict';
 
 const assert = require('assert');
 
 const F = require('..');
 
-describe('MonadBase', function(){
+const MonadBase = F.MonadBase;
+
+describe('MonadBase', () => {
     function getGoodMonad() {
-        return new (class extends F.MonadBase {
+        return new (class extends MonadBase {
             bind(transform) {
                 return transform(5);
             }
@@ -15,14 +17,14 @@ describe('MonadBase', function(){
 
     describe('call abstruct constructor', () => {
         it('should throw', () => {
-            assert.throws(() => new F.MonadBase());
+            assert.throws(() => new MonadBase());
         });
     });
 
     describe('call derived constructor', () => {
         describe('with not implemented bind', () => {
             it('should throw', () => {
-                assert.throws(() => new (class extends F.MonadBase {}));
+                assert.throws(() => new (class extends MonadBase {}));
             });
         });
 

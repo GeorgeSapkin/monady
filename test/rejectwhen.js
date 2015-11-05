@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const assert = require('assert');
 const co     = require('co');
@@ -11,7 +11,7 @@ const nothing    = F.nothing;
 const RejectWhen = F.RejectWhen;
 const rejectWhen = F.rejectWhen;
 
-describe('RejectWhen', function(){
+describe('RejectWhen', () => {
     describe('call constructor', () => {
         describe('should work', () => {
             it('with all arguments', () => {
@@ -84,7 +84,7 @@ describe('RejectWhen', function(){
             it('when nothing', () => {
                 assert.doesNotThrow(
                     () => rejectWhenNothing(nothing).then(
-                        val => assert(false),
+                        () => assert(false),
                         err => assert(err instanceof Error)
                     ));
             });
@@ -92,7 +92,7 @@ describe('RejectWhen', function(){
             it('when maybe nothing', () => {
                 assert.doesNotThrow(
                     () => rejectWhenNothing(maybe(nothing)).then(
-                        val => assert(false),
+                        () => assert(false),
                         err => assert(err instanceof Error)
                     ));
             });
@@ -141,7 +141,7 @@ describe('RejectWhen', function(){
                 return co(function* () {
                     return rejectWhenNothing(nothing);
                 }).then(
-                    val => assert(false),
+                    () => assert(false),
                     err => assert(err instanceof Error)
                 );
             });
@@ -150,7 +150,7 @@ describe('RejectWhen', function(){
                 return co(function* () {
                     return rejectWhenNothing(maybe(nothing));
                 }).then(
-                    val => assert(false),
+                    () => assert(false),
                     err => assert(err instanceof Error)
                 );
             });
@@ -159,7 +159,7 @@ describe('RejectWhen', function(){
                 return co(function* () {
                     return rejectWhenNothing(Promise.resolve(nothing));
                 }).then(
-                    val => assert(false),
+                    () => assert(false),
                     err => assert(err instanceof Error)
                 );
             });
@@ -168,7 +168,7 @@ describe('RejectWhen', function(){
                 return co(function* () {
                     return rejectWhenNothing(Promise.resolve(maybe(nothing)));
                 }).then(
-                    val => assert(false),
+                    () => assert(false),
                     err => assert(err instanceof Error)
                 );
             });
