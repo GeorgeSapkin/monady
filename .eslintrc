@@ -1,0 +1,20 @@
+{
+    "extends": "eslint",
+    "parser":  "babel-eslint",
+    "env": {
+        "es6":  true,
+        "node": true
+    },
+    "rules": {
+        "brace-style":          0,
+        "curly":                0,
+        "eqeqeq":               0,
+        "key-spacing":          0,
+        "indent":               0,
+        "no-multi-spaces":      0,
+        "no-underscore-dangle": 0,
+        "no-use-before-define": 0,
+        "quotes":               [1, "single"],
+        "require-jsdoc":        0
+    }
+}
