@@ -12,7 +12,7 @@ const RejectWhen = F.RejectWhen;
 const rejectWhen = F.rejectWhen;
 
 describe('RejectWhen', () => {
-    describe('call constructor', () => {
+    describe('constructor', () => {
         describe('should work', () => {
             it('with all arguments', () => {
                 assert.doesNotThrow(
@@ -35,7 +35,7 @@ describe('RejectWhen', () => {
         });
     });
 
-    describe('create through factory method', () => {
+    describe('factory method', () => {
         describe('should work', () => {
             it('with all arguments', () => {
                 assert.doesNotThrow(
@@ -62,7 +62,7 @@ describe('RejectWhen', () => {
         val => val === nothing,
         ()  => new Error('value rejected'));
 
-    describe('call then', () => {
+    describe('then', () => {
         describe('should transform and value is same', () => {
             it('when not nothing', () => {
                 assert.doesNotThrow(

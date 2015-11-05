@@ -12,13 +12,13 @@ const Nothing = F.Nothing;
 const nothing = F.nothing;
 
 describe('Maybe', () => {
-    describe('call constructor', () => {
+    describe('constructor', () => {
         it('should work', () => {
             assert.doesNotThrow(() => new Maybe(), TypeError);
         });
     });
 
-    describe('create through factory method', () => {
+    describe('factory method', () => {
         describe('should return Just', () => {
             it('with same value', () => {
                 const m = maybe(5);
@@ -64,14 +64,14 @@ describe('Maybe', () => {
             });
 
             it('with resolved Promise with null', () => {
-                return maybe(Promise.resolve(nothing)).then(r => {
+                return maybe(Promise.resolve(null)).then(r => {
                     assert(r instanceof Nothing);
                     assert.equal(r, nothing);
                 });
             });
 
             it('with resolved Promise with no args', () => {
-                return maybe(Promise.resolve(nothing)).then(r => {
+                return maybe(Promise.resolve()).then(r => {
                     assert(r instanceof Nothing);
                     assert.equal(r, nothing);
                 });
@@ -88,6 +88,68 @@ describe('Maybe', () => {
                 return maybe(Promise.reject(5)).then(r => {
                     assert(r instanceof Nothing);
                     assert.equal(r, nothing);
+                });
+            });
+        });
+    });
+
+    describe('toString', () => {
+        describe('should return value', () => {
+            it('with same value', () => {
+                assert.strictEqual(maybe(5).toString(), '5');
+            });
+        });
+
+        describe('should return Nothing', () => {
+            it('with nothing', () => {
+                assert.strictEqual(maybe(nothing).toString(), 'Nothing');
+            });
+
+            it('with null', () => {
+                assert.strictEqual(maybe(null).toString(), 'Nothing');
+            });
+
+            it('with no args', () => {
+                assert.strictEqual(maybe().toString(), 'Nothing');
+            });
+        });
+
+        describe('should resolve to same value', () => {
+            it('with resolved Promise with value', () => {
+                return maybe(Promise.resolve(5)).then(r => {
+                    assert.strictEqual(r.toString(), '5');
+                });
+            });
+        });
+
+        describe('should resolve to Nothing', () => {
+            it('with resolved Promise with nothing', () => {
+                return maybe(Promise.resolve(nothing)).then(r => {
+                    assert.strictEqual(r.toString(), 'Nothing');
+                });
+            });
+
+            it('with resolved Promise with null', () => {
+                return maybe(Promise.resolve(null)).then(r => {
+                    assert.strictEqual(r.toString(), 'Nothing');
+                });
+            });
+
+            it('with resolved Promise with no args', () => {
+                return maybe(Promise.resolve()).then(r => {
+                    assert.strictEqual(r.toString(), 'Nothing');
+                });
+            });
+
+            it('with resolved Promise with maybe nothing', () => {
+                return maybe(Promise.resolve(maybe(nothing))).then(r => {
+                    assert.strictEqual(r.toString(), 'Nothing');
+                });
+            });
+
+            it('with rejected Promise', () => {
+                return maybe(Promise.reject(5)).then(r => {
+                    assert.strictEqual(r.toString(), 'Nothing');
                 });
             });
         });

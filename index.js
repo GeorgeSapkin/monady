@@ -33,7 +33,7 @@ class Identity extends MonadBase {
         return transform(this.value);
     }
 
-    toString() { return this.value; }
+    toString() { return this.value.toString(); }
 }
 
 function identity(val) {
@@ -102,7 +102,7 @@ class Either extends MonadBase {
         return new Either(transform(this.left));
     }
 
-    toString() { return this.value; }
+    toString() { return this.value.toString(); }
 }
 
 function either(left, right) { return new Either(left, right); }

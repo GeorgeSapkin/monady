@@ -9,7 +9,7 @@ const Either = F.Either;
 const either = F.either;
 
 describe('Either', () => {
-    describe('call constructor', () => {
+    describe('constructor', () => {
         describe('should work', () => {
             it('with left', () => {
                 assert.doesNotThrow(() => new Either(5));
@@ -54,7 +54,7 @@ describe('Either', () => {
         });
     });
 
-    describe('call then', () => {
+    describe('then', () => {
         describe('with transform', () => {
             it('should transform left', () => {
                 assert.equal(either(5).then(a => a + 3), 8);
@@ -68,6 +68,15 @@ describe('Either', () => {
             it('should throw', () => {
                 assert.throws(either(5).then);
             });
+        });
+    });
+
+    describe('toString', () => {
+        it('should return left', () => {
+            assert.strictEqual(either(5).toString(), '5');
+        });
+        it('should return right', () => {
+            assert.strictEqual(either(5, 7).toString(), '7');
         });
     });
 

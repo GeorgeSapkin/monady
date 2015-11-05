@@ -15,13 +15,13 @@ describe('MonadBase', () => {
         });
     }
 
-    describe('call abstruct constructor', () => {
+    describe('abstruct constructor', () => {
         it('should throw', () => {
             assert.throws(() => new MonadBase());
         });
     });
 
-    describe('call derived constructor', () => {
+    describe('derived constructor', () => {
         describe('with not implemented bind', () => {
             it('should throw', () => {
                 assert.throws(() => new (class extends MonadBase {}));
@@ -35,7 +35,7 @@ describe('MonadBase', () => {
         });
     });
 
-    describe('call then on a correct implementation', () => {
+    describe('then on a correct implementation', () => {
         it('should work', () => {
             assert.equal(getGoodMonad().then(a => a + 3), 8);
         });

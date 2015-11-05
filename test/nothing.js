@@ -9,7 +9,7 @@ const Nothing = F.Nothing;
 const nothing = F.nothing;
 
 describe('Nothing', () => {
-    describe('call constructor', () => {
+    describe('constructor', () => {
         it('should work', () => {
             assert.doesNotThrow(() => new Nothing(), TypeError);
         });
@@ -21,9 +21,15 @@ describe('Nothing', () => {
         });
     });
 
-    describe('call then', () => {
+    describe('then', () => {
         it('should fail', () => {
             assert.throws(() => nothing.then(a => a), TypeError);
+        });
+    });
+
+    describe('toString', () => {
+        describe('should work', () => {
+            assert.strictEqual(nothing.toString(), 'Nothing');
         });
     });
 

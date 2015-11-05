@@ -9,7 +9,7 @@ const Just = F.Just;
 const just = F.just;
 
 describe('Just', () => {
-    describe('call constructor', () => {
+    describe('constructor', () => {
         describe('should work', () => {
             it('with value', () => {
                 assert.doesNotThrow(() => new Just(5));
@@ -27,7 +27,7 @@ describe('Just', () => {
         });
     });
 
-    describe('create through factory method', () => {
+    describe('factory method', () => {
         describe('should work', () => {
             it('with value', () => {
                 assert.doesNotThrow(() => just(5));
@@ -51,7 +51,7 @@ describe('Just', () => {
         });
     });
 
-    describe('call then', () => {
+    describe('then', () => {
         describe('should work', () => {
             it('with transform', () => {
                 assert.equal(just(5).then(a => a + 3), 8);
@@ -62,6 +62,12 @@ describe('Just', () => {
             it('without transform', () => {
                 assert.throws(just(5).then);
             });
+        });
+    });
+
+    describe('toString', () => {
+        describe('should return value', () => {
+            assert.strictEqual(just(5).toString(), '5');
         });
     });
 

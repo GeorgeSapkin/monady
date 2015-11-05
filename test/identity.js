@@ -9,7 +9,7 @@ const Identity = F.Identity;
 const identity = F.identity;
 
 describe('Identity', () => {
-    describe('call constructor', () => {
+    describe('constructor', () => {
         describe('should work', () => {
             it('with value', () => {
                 assert.doesNotThrow(() => new Identity(5));
@@ -51,7 +51,7 @@ describe('Identity', () => {
         });
     });
 
-    describe('call then', () => {
+    describe('then', () => {
         describe('should work', () => {
             it('with transform', () => {
                 assert.equal(identity(5).then(a => a + 3), 8);
@@ -62,6 +62,12 @@ describe('Identity', () => {
             it('without transform', () => {
                 assert.throws(identity(5).then);
             });
+        });
+    });
+
+    describe('toString', () => {
+        describe('should return value', () => {
+            assert.strictEqual(identity(5).toString(), '5');
         });
     });
 
