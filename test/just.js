@@ -116,6 +116,27 @@ describe('Just', () => {
         });
     });
 
+    describe('lift2', () => {
+        describe('should work', () => {
+            it('with transform', () => {
+                const lifted = Just.lift2((x, y) => x + y);
+                const result = lifted(just(5), just(3));
+                assert(result instanceof Just);
+                assert.equal(result, 8);
+            });
+        });
+
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => Just.lift2());
+            });
+
+            it('with bad transform', () => {
+                assert.throws(() => Just.lift2(1));
+            });
+        });
+    });
+
     describe('toString', () => {
         describe('should return value', () => {
             assert.strictEqual(just(5).toString(), '5');

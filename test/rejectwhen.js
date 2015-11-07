@@ -6,6 +6,7 @@ const R      = require('ramda');
 
 const F = require('..');
 
+const identity   = F.identity;
 const maybe      = F.maybe;
 const nothing    = F.nothing;
 const RejectWhen = F.RejectWhen;
@@ -167,6 +168,35 @@ describe('RejectWhen', () => {
 
             it('with bad transform', () => {
                 assert.throws(() => RejectWhen.lift(() => {}, () => {}, 5));
+            });
+        });
+    });
+
+    describe('lift2', () => {
+        describe('should work', () => {
+            it('with transform', () => {
+                const lifted = RejectWhen.lift2(() => {}, () => {}, (x, y) => x + y);
+                const result = lifted(identity(5), identity(3));
+                assert(result instanceof RejectWhen);
+                assert.equal(result, 8);
+            });
+        });
+
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => RejectWhen.lift2());
+            });
+
+            it('with bad when', () => {
+                assert.throws(() => RejectWhen.lift2(5));
+            });
+
+            it('with bad error', () => {
+                assert.throws(() => RejectWhen.lift2(() => {}, 5));
+            });
+
+            it('with bad transform', () => {
+                assert.throws(() => RejectWhen.lift2(() => {}, () => {}, 5));
             });
         });
     });

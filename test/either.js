@@ -115,6 +115,57 @@ describe('Either', () => {
         });
     });
 
+    describe('lift', () => {
+        describe('should work', () => {
+            it('with transform', () => {
+                const lifted = Either.lift(x => x + 3);
+                const result = lifted(5);
+                assert(result instanceof Either);
+                assert.equal(result, 8);
+            });
+        });
+
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => Either.lift());
+            });
+
+            it('with bad transform', () => {
+                assert.throws(() => Either.lift(1));
+            });
+        });
+    });
+
+    describe('lift2', () => {
+        describe('should transform left', () => {
+            it('with transform', () => {
+                const lifted = Either.lift2((x, y) => x + y);
+                const result = lifted(either(5), either(3));
+                assert(result instanceof Either);
+                assert.equal(result, 8);
+            });
+        });
+
+        describe('should transform right', () => {
+            it('with transform', () => {
+                const lifted = Either.lift2((x, y) => x + y);
+                const result = lifted(either(5, 7), either(3, 5));
+                assert(result instanceof Either);
+                assert.equal(result, 12);
+            });
+        });
+
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => Either.lift2());
+            });
+
+            it('with bad transform', () => {
+                assert.throws(() => Either.lift2(1));
+            });
+        });
+    });
+
     describe('toString', () => {
         it('should return left', () => {
             assert.strictEqual(either(5).toString(), '5');

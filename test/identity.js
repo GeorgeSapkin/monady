@@ -116,6 +116,27 @@ describe('Identity', () => {
         });
     });
 
+    describe('lift2', () => {
+        describe('should work', () => {
+            it('with transform', () => {
+                const lifted = Identity.lift2((x, y) => x + y);
+                const result = lifted(identity(5), identity(3));
+                assert(result instanceof Identity);
+                assert.equal(result, 8);
+            });
+        });
+
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => Identity.lift2());
+            });
+
+            it('with bad transform', () => {
+                assert.throws(() => Identity.lift2(1));
+            });
+        });
+    });
+
     describe('toString', () => {
         describe('should return value', () => {
             assert.strictEqual(identity(5).toString(), '5');

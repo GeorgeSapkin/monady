@@ -25,6 +25,15 @@ class MonadBase {
 
         return value => new this(transform(value));
     }
+
+    static lift2(transform) {
+        assert(transform instanceof Function, 'transform must be a function');
+
+        return (monadA, monadB) => new this(
+            monadA.bind(valueA =>
+            monadB.bind(valueB =>
+            transform(valueA, valueB))));
+    }
 }
 
 module.exports.MonadBase = MonadBase;
@@ -148,8 +157,6 @@ class RejectWhen extends Identity {
                 result => rejectWhen(when, error, result)
                     .bind(transform, reject));
 
-        if (value.bind)
-            return value.bind(transform, reject);
         if (value.then)
             return value.then(transform, reject);
         return transform(value);
@@ -171,6 +178,17 @@ class RejectWhen extends Identity {
         assert(transform instanceof Function, 'transform must be a function');
 
         return value => new this(when, error, transform(value));
+    }
+
+    static lift2(when, error, transform) {
+        assert(when instanceof Function, 'when must be a function');
+        assert(error instanceof Function, 'error must be a function');
+        assert(transform instanceof Function, 'transform must be a function');
+
+        return (monadA, monadB) => new this(when, error,
+            monadA.bind(valueA =>
+            monadB.bind(valueB =>
+            transform(valueA, valueB))));
     }
 }
 
