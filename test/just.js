@@ -59,8 +59,33 @@ describe('Just', () => {
         });
 
         describe('should throw', () => {
-            it('without transform', () => {
-                assert.throws(just(5).then);
+            it('with no arguments', () => {
+                assert.throws(() => just(5).then());
+            });
+
+            it('with bad transform', () => {
+                assert.throws(() => just(5).then(1));
+            });
+        });
+    });
+
+
+    describe('map', () => {
+        describe('should work', () => {
+            it('with transform', () => {
+                const result = just(5).map(a => a + 3);
+                assert(result instanceof Just);
+                assert.equal(result, 8);
+            });
+        });
+
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => just(5).map());
+            });
+
+            it('with bad transform', () => {
+                assert.throws(() => just(5).map(1));
             });
         });
     });

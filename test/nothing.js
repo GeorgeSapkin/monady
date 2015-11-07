@@ -27,6 +27,12 @@ describe('Nothing', () => {
         });
     });
 
+    describe('map', () => {
+        it('should fail', () => {
+            assert.throws(() => nothing.map(a => a), TypeError);
+        });
+    });
+
     describe('toString', () => {
         describe('should work', () => {
             assert.strictEqual(nothing.toString(), 'Nothing');

@@ -59,8 +59,32 @@ describe('Identity', () => {
         });
 
         describe('should throw', () => {
-            it('without transform', () => {
-                assert.throws(identity(5).then);
+            it('with no arguments', () => {
+                assert.throws(() => identity(5).then());
+            });
+
+            it('with bad transform', () => {
+                assert.throws(() => identity(5).then(1));
+            });
+        });
+    });
+
+    describe('map', () => {
+        describe('should work', () => {
+            it('with transform', () => {
+                const result = identity(5).map(a => a + 3);
+                assert(result instanceof Identity);
+                assert.equal(result, 8);
+            });
+        });
+
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => identity(5).map());
+            });
+
+            it('with bad transform', () => {
+                assert.throws(() => identity(5).map(1));
             });
         });
     });

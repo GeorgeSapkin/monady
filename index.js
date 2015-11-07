@@ -6,9 +6,10 @@ class MonadBase {
     constructor() {
         // ES6 alternative new.target
         assert.notStrictEqual(this.constructor, MonadBase,
-            'Cannot construct MonadBase instances directly');
+            `Cannot construct ${this.constructor.name} instances directly`);
 
-        assert(this.bind instanceof Function, 'Must override bind method');
+        assert(this.bind instanceof Function, 'Must implement bind method');
+        assert(this.map instanceof Function, 'Must implement map method');
     }
 
     // emulate Promise API
@@ -31,6 +32,13 @@ class Identity extends MonadBase {
         assert(transform instanceof Function);
 
         return transform(this.value);
+    }
+
+    map(transform) {
+        assert(transform instanceof Function);
+
+        // construct derived types as well
+        return new this.constructor(transform(this.value));
     }
 
     toString() { return this.value.toString(); }
@@ -98,8 +106,16 @@ class Either extends MonadBase {
         assert(transform instanceof Function);
 
         if (this.right != null)
-             return new Either(this.left, transform(this.right));
-        return new Either(transform(this.left));
+             return transform(this.right);
+        return transform(this.left);
+    }
+
+    map(transform) {
+        assert(transform instanceof Function);
+
+        if (this.right != null)
+             return new this.constructor(this.left, transform(this.right));
+        return new this.constructor(transform(this.left));
     }
 
     toString() { return this.value.toString(); }
@@ -124,9 +140,9 @@ class RejectWhen extends Identity {
         assert(transform instanceof Function, 'transform must be a function');
         assert(reject instanceof Function, 'reject must be a function');
 
-        const value = this.value;
         const when  = this.when;
         const error = this.error;
+        const value = this.value;
 
         if (when(value))
             return reject(error(value));
@@ -136,7 +152,21 @@ class RejectWhen extends Identity {
                 result => rejectWhen(when, error, result)
                     .bind(transform, reject));
 
-        return map(transform, reject, value);
+        if (value.bind)
+            return value.bind(transform, reject);
+        if (value.then)
+            return value.then(transform, reject);
+        return transform(value);
+    }
+
+    map(transform) {
+        assert(transform instanceof Function, 'transform must be a function');
+
+        const when  = this.when;
+        const error = this.error;
+        const value = this.value;
+
+        return new this.constructor(when, error, transform(value));
     }
 }
 
@@ -146,17 +176,6 @@ function rejectWhen(when, error, value) {
 
 module.exports.RejectWhen = RejectWhen;
 module.exports.rejectWhen = rejectWhen;
-
-function map(transform, reject, obj) {
-    assert(transform instanceof Function, 'transform must be a function');
-    assert(reject instanceof Function, 'reject must be a function');
-
-    if (obj.bind)
-        return obj.bind(transform, reject);
-    if (obj.then)
-        return obj.then(transform, reject);
-    return transform(obj);
-}
 
 const Continuation          = Promise;
 Continuation.unit           = Continuation.resolve;

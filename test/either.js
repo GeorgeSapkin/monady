@@ -64,9 +64,38 @@ describe('Either', () => {
             });
         });
 
-        describe('without transform', () => {
-            it('should throw', () => {
-                assert.throws(either(5).then);
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => either(5).then());
+            });
+
+            it('with bad transform', () => {
+                assert.throws(() => either(5).then(1));
+            });
+        });
+    });
+
+    describe('map', () => {
+        describe('with transform', () => {
+            it('should transform left', () => {
+                const result = either(5).map(a => a + 3);
+                assert(result instanceof Either);
+                assert.equal(result, 8);
+            });
+            it('should transform right', () => {
+                const result = either(5, 7).map(a => a + 3);
+                assert(result instanceof Either);
+                assert.equal(result, 10);
+            });
+        });
+
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => either(5).map());
+            });
+
+            it('with bad transform', () => {
+                assert.throws(() => either(5).map(1));
             });
         });
     });

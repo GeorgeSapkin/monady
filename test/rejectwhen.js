@@ -115,6 +115,26 @@ describe('RejectWhen', () => {
         });
     });
 
+    describe('map', () => {
+        describe('should work', () => {
+            it('when not nothing', () => {
+                const result = rejectWhenNothing(5).map(val => val + 2);
+                assert(result instanceof RejectWhen);
+                assert.equal(result, 7);
+            });
+        });
+
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => rejectWhenNothing(5).map());
+            });
+
+            it('with bad transform', () => {
+                assert.throws(() => rejectWhenNothing(5).map(1));
+            });
+        });
+    });
+
     describe('function*', () => {
         describe('should yield same value', () => {
             it('when not nothing', () => {
