@@ -180,12 +180,3 @@ function rejectWhen(when, error, value) {
 
 module.exports.RejectWhen = RejectWhen;
 module.exports.rejectWhen = rejectWhen;
-
-const Continuation          = Promise;
-Continuation.unit           = Continuation.resolve;
-Continuation.prototype.bind = Continuation.prototype.then;
-
-function continuation(val) { return Continuation.unit(val); }
-
-module.exports.Continuation = Continuation;
-module.exports.continuation = continuation;
