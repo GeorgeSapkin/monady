@@ -21,7 +21,7 @@ describe('MonadBase', () => {
     });
 
     describe('derived constructor', () => {
-        describe('with not implemented bind and map', () => {
+        describe('on a bad implementation', () => {
             it('should throw', () => {
                 assert.throws(() => new (class extends MonadBase {}));
             });

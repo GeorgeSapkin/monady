@@ -56,6 +56,12 @@ describe('Identity', () => {
             it('with transform', () => {
                 assert.equal(identity(5).then(a => a + 3), 8);
             });
+
+            it('with lifted', () => {
+                const result = identity(5).then(Identity.lift(x => x + 3));
+                assert(result instanceof Identity);
+                assert.equal(result, 8);
+            });
         });
 
         describe('should throw', () => {
@@ -85,6 +91,27 @@ describe('Identity', () => {
 
             it('with bad transform', () => {
                 assert.throws(() => identity(5).map(1));
+            });
+        });
+    });
+
+    describe('lift', () => {
+        describe('should work', () => {
+            it('with transform', () => {
+                const lifted = Identity.lift(x => x + 3);
+                const result = lifted(5);
+                assert(result instanceof Identity);
+                assert.equal(result, 8);
+            });
+        });
+
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => Identity.lift());
+            });
+
+            it('with bad transform', () => {
+                assert.throws(() => Identity.lift(1));
             });
         });
     });

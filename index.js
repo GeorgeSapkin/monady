@@ -9,18 +9,29 @@ class MonadBase {
             `Cannot construct ${this.constructor.name} instances directly`);
 
         assert(this.bind instanceof Function, 'Must implement bind method');
-        assert(this.map instanceof Function, 'Must implement map method');
     }
 
     // emulate Promise API
     then() { return this.bind.apply(this, arguments); }
+
+    map(transform) {
+        assert(transform instanceof Function, 'transform must be a function');
+
+        return this.bind(this.constructor.lift(transform));
+    }
+
+    static lift(transform) {
+        assert(transform instanceof Function, 'transform must be a function');
+
+        return value => new this(transform(value));
+    }
 }
 
 module.exports.MonadBase = MonadBase;
 
 class Identity extends MonadBase {
     constructor(value) {
-        assert(value != null);
+        assert(value != null, 'value must be set');
 
         super();
         this._value = value;
@@ -29,16 +40,9 @@ class Identity extends MonadBase {
     get value() { return this._value; }
 
     bind(transform) {
-        assert(transform instanceof Function);
+        assert(transform instanceof Function, 'transform must be a function');
 
         return transform(this.value);
-    }
-
-    map(transform) {
-        assert(transform instanceof Function);
-
-        // construct derived types as well
-        return new this.constructor(transform(this.value));
     }
 
     toString() { return this.value.toString(); }
@@ -103,19 +107,11 @@ class Either extends MonadBase {
     }
 
     bind(transform) {
-        assert(transform instanceof Function);
+        assert(transform instanceof Function, 'transform must be a function');
 
         if (this.right != null)
              return transform(this.right);
         return transform(this.left);
-    }
-
-    map(transform) {
-        assert(transform instanceof Function);
-
-        if (this.right != null)
-             return new this.constructor(this.left, transform(this.right));
-        return new this.constructor(transform(this.left));
     }
 
     toString() { return this.value.toString(); }
@@ -167,6 +163,14 @@ class RejectWhen extends Identity {
         const value = this.value;
 
         return new this.constructor(when, error, transform(value));
+    }
+
+    static lift(when, error, transform) {
+        assert(when instanceof Function, 'when must be a function');
+        assert(error instanceof Function, 'error must be a function');
+        assert(transform instanceof Function, 'transform must be a function');
+
+        return value => new this(when, error, transform(value));
     }
 }
 

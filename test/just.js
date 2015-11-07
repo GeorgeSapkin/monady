@@ -56,6 +56,12 @@ describe('Just', () => {
             it('with transform', () => {
                 assert.equal(just(5).then(a => a + 3), 8);
             });
+
+            it('with lifted', () => {
+                const result = just(5).then(Just.lift(x => x + 3));
+                assert(result instanceof Just);
+                assert.equal(result, 8);
+            });
         });
 
         describe('should throw', () => {
@@ -68,7 +74,6 @@ describe('Just', () => {
             });
         });
     });
-
 
     describe('map', () => {
         describe('should work', () => {
@@ -86,6 +91,27 @@ describe('Just', () => {
 
             it('with bad transform', () => {
                 assert.throws(() => just(5).map(1));
+            });
+        });
+    });
+
+    describe('lift', () => {
+        describe('should work', () => {
+            it('with transform', () => {
+                const lifted = Just.lift(x => x + 3);
+                const result = lifted(5);
+                assert(result instanceof Just);
+                assert.equal(result, 8);
+            });
+        });
+
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => Just.lift());
+            });
+
+            it('with bad transform', () => {
+                assert.throws(() => Just.lift(1));
             });
         });
     });

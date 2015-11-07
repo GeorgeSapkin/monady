@@ -63,13 +63,20 @@ describe('RejectWhen', () => {
         ()  => new Error('value rejected'));
 
     describe('then', () => {
-        describe('should transform and value is same', () => {
-            it('when not nothing', () => {
-                assert.doesNotThrow(
-                    () => rejectWhenNothing(5).then(
-                        val => assert.equal(val, 5),
-                        err => assert.ifError(err)
-                    ));
+        describe('should work', () => {
+            it('with transform', () => {
+                const result = rejectWhenNothing(5).then(
+                    val => val + 3,
+                    err => assert.ifError(err));
+                assert.equal(result, 8);
+            });
+
+            it('with lifted', () => {
+                const result = rejectWhenNothing(5).then(
+                    RejectWhen.lift(() => {}, () => {}, x => x + 3),
+                    err => assert.ifError(err));
+                assert(result instanceof RejectWhen);
+                assert.equal(result, 8);
             });
 
             it('when Promise resolves to not nothing', () => {
@@ -131,6 +138,35 @@ describe('RejectWhen', () => {
 
             it('with bad transform', () => {
                 assert.throws(() => rejectWhenNothing(5).map(1));
+            });
+        });
+    });
+
+    describe('lift', () => {
+        describe('should work', () => {
+            it('with transform', () => {
+                const lifted = RejectWhen.lift(() => {}, () => {}, x => x + 3);
+                const result = lifted(5);
+                assert(result instanceof RejectWhen);
+                assert.equal(result, 8);
+            });
+        });
+
+        describe('should throw', () => {
+            it('with no arguments', () => {
+                assert.throws(() => RejectWhen.lift());
+            });
+
+            it('with bad when', () => {
+                assert.throws(() => RejectWhen.lift(5));
+            });
+
+            it('with bad error', () => {
+                assert.throws(() => RejectWhen.lift(() => {}, 5));
+            });
+
+            it('with bad transform', () => {
+                assert.throws(() => RejectWhen.lift(() => {}, () => {}, 5));
             });
         });
     });

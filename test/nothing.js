@@ -33,6 +33,12 @@ describe('Nothing', () => {
         });
     });
 
+    describe('lift', () => {
+        it('should fail', () => {
+            assert.throws(() => Nothing.lift(a => a), TypeError);
+        });
+    });
+
     describe('toString', () => {
         describe('should work', () => {
             assert.strictEqual(nothing.toString(), 'Nothing');

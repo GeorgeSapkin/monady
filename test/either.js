@@ -55,12 +55,27 @@ describe('Either', () => {
     });
 
     describe('then', () => {
-        describe('with transform', () => {
-            it('should transform left', () => {
+        describe('should transform left', () => {
+            it('with transform', () => {
                 assert.equal(either(5).then(a => a + 3), 8);
             });
-            it('should transform right', () => {
+
+            it('with lifted', () => {
+                const result = either(5).then(Either.lift(x => x + 3));
+                assert(result instanceof Either);
+                assert.equal(result, 8);
+            });
+        });
+
+        describe('should transform right', () => {
+            it('with transform', () => {
                 assert.equal(either(5, 7).then(a => a + 3), 10);
+            });
+
+            it('with lifted', () => {
+                const result = either(5, 7).then(Either.lift(x => x + 3));
+                assert(result instanceof Either);
+                assert.equal(result, 10);
             });
         });
 
