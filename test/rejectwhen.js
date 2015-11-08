@@ -2,7 +2,6 @@
 
 const assert = require('assert');
 const co     = require('co');
-const R      = require('ramda');
 
 const F = require('..');
 
@@ -59,7 +58,7 @@ describe('RejectWhen', () => {
         });
     });
 
-    const rejectWhenNothing = R.curry(rejectWhen)(
+    const rejectWhenNothing = rejectWhen.bind(null,
         val => val === nothing,
         ()  => new Error('value rejected'));
 

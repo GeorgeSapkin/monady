@@ -27,8 +27,7 @@
     "eslint": "^1.8.0",
     "eslint-config-eslint": "^1.0.1",
     "istanbul": "^0.4.0",
-    "mocha": "^2.3.3",
-    "ramda": "^0.18.0"
+    "mocha": "^2.3.3"
   },
   "engines": {
     "node": ">=4.0.0"
