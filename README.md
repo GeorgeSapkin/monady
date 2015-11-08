@@ -211,8 +211,7 @@ rejectWhenNothing(nothing).then(
 // rejects maybe nothing
 rejectWhenNothing(maybe(nothing)).then(
     () => assert(false),
-    err => assert(err instanceof Error)
-);
+    err => assert(err instanceof Error));
 ```
 
 #### `lift(x => )`
@@ -252,8 +251,7 @@ assert.equal(result, 8);
 
 rejectWhenNothing(null /* or nothing or not specified */).then(
     () => assert(false),
-    err => assert(err instanceof Error)
-);
+    err => assert(err instanceof Error));
 ```
 
 Rejecting value when it is not set using `RejectWhen` and `either`.
@@ -271,8 +269,7 @@ assert.equal(result, 8);
 
 rejectWhenError(new Error()).then(
     () => assert(false),
-    err => assert(err instanceof Error)
-));
+    err => assert(err instanceof Error));
 ```
 
 Using generator functions and lifting to avoid explicit null checks.
