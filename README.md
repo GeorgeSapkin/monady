@@ -49,9 +49,8 @@ assert.equal(identity(5).then(lifted), 8);
 #### `lift2((x, y) => )`
 ```js
 const lifted = Identity.lift2((x, y) => x + y);
-const result = lifted(identity(5), identity(3));
-assert(result instanceof Identity);
-assert.equal(result, 8);
+assert(lifted(identity(5), identity(3)) instanceof Identity);
+assert.equal(lifted(identity(5), identity(3)), 8);
 ```
 
 #### `map(x => )`
@@ -66,7 +65,7 @@ assert.equal(identity(5).map(a => a + 3), 8);
 #### `just(x)`
 #### `nothing`
 
-`Maybe` resolves to either `Just` or `Nothing` depending on whether a value is passed to the unit function. `Nothing` cannot be bound, lifted or mapped.
+`Maybe` resolves to either `Just` or `Nothing` depending on whether a value is passed to the unit function. `Nothing` is not thenable but can be bound, lifted or mapped.
 
 ```js
 assert(maybe(5) instanceof Just);
@@ -87,31 +86,38 @@ assert.equal(maybe(), nothing);
 ```js
 assert.equal(just(5).then(a => a + 3), 8);
 
-// nothing cannot be bound
+assert.strictEqual(nothing.bind(), nothing);
+
+// nothing is not thenable
 assert.throws(() => nothing.then(a => a), TypeError);
 ```
 
 #### `lift(x => )`
 ```js
-const lifted = Just.lift(x => x + 3);
-assert(lifted(5) instanceof Just);
-assert.equal(lifted(5), 8);
+const lifted1 = Just.lift(x => x + 3);
+assert(lifted1(5) instanceof Just);
+assert.equal(lifted1(5), 8);
 
-assert(just(5).then(lifted) instanceof Just);
-assert.equal(just(5).then(lifted), 8);
+assert(just(5).then(lifted1) instanceof Just);
+assert.equal(just(5).then(lifted1), 8);
 
-// nothing cannot be lifted
-assert.throws(() => Nothing.lift(a => a), TypeError);
+const lifted2 = Nothing.lift(x => x + 3);
+assert(lifted2(5) instanceof Nothing);
+assert.equal(lifted2(5), nothing);
+
+assert(just(5).then(lifted2) instanceof Nothing);
+assert.equal(just(5).then(lifted2), nothing);
 ```
 
 #### `lift2((x, y) => )`
 ```js
-const lifted = Just.lift2((x, y) => x + y);
-assert(lifted(just(5), just(3)) instanceof Just);
-assert.equal(lifted(just(5), just(3)), 8);
+const lifted1 = Just.lift2((x, y) => x + y);
+assert(lifted1(just(5), just(3)) instanceof Just);
+assert.equal(lifted1(just(5), just(3)), 8);
 
-// nothing cannot be lifted
-assert.throws(() => Nothing.lift2((a, b) => a + b), TypeError);
+const lifted2 = Nothing.lift2((x, y) => x + y);
+assert(lifted2(identity(5), identity(3)) instanceof Nothing);
+assert.equal(lifted2(identity(5), identity(3)), nothing);
 ```
 
 #### `map(x => )`
@@ -119,8 +125,7 @@ assert.throws(() => Nothing.lift2((a, b) => a + b), TypeError);
 assert(just(5).map(a => a + 3) instanceof Just);
 assert.equal(just(5).map(a => a + 3), 8);
 
-// nothing cannot be mapped
-assert.throws(() => nothing.map(a => a), TypeError);
+assert.equal(nothing.map(a => a), nothing);
 ```
 
 ### Either

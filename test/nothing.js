@@ -5,8 +5,10 @@ const co     = require('co');
 
 const F = require('..');
 
-const Nothing = F.Nothing;
-const nothing = F.nothing;
+const Identity = F.Identity;
+const identity = F.identity;
+const Nothing  = F.Nothing;
+const nothing  = F.nothing;
 
 describe('Nothing', () => {
     describe('constructor', () => {
@@ -21,27 +23,45 @@ describe('Nothing', () => {
         });
     });
 
+    describe('bind', () => {
+        it('should work', () => {
+            assert.strictEqual(nothing.bind(), nothing);
+        });
+    });
+
     describe('then', () => {
-        it('should fail', () => {
+        it('should throw', () => {
             assert.throws(() => nothing.then(a => a), TypeError);
         });
     });
 
     describe('map', () => {
-        it('should fail', () => {
-            assert.throws(() => nothing.map(a => a), TypeError);
+        describe('should work', () => {
+            it('with transform', () => {
+                assert.equal(nothing.map(a => a), nothing);
+            });
         });
     });
 
     describe('lift', () => {
-        it('should fail', () => {
-            assert.throws(() => Nothing.lift(a => a), TypeError);
+        describe('should work', () => {
+            it('with transform', () => {
+                const lifted = Nothing.lift(x => x + 3);
+                const result = lifted(5);
+                assert(result instanceof Nothing);
+                assert.equal(result, nothing);
+            });
         });
     });
 
     describe('lift2', () => {
-        it('should fail', () => {
-            assert.throws(() => Nothing.lift2((a, b) => a + b), TypeError);
+        describe('should work', () => {
+            it('with transform', () => {
+                const lifted = Nothing.lift2((x, y) => x + y);
+                const result = lifted(identity(5), identity(3));
+                assert(result instanceof Nothing);
+                assert.equal(result, nothing);
+            });
         });
     });
 

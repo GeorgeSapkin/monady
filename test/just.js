@@ -5,8 +5,10 @@ const co     = require('co');
 
 const F = require('..');
 
-const Just = F.Just;
-const just = F.just;
+const Just    = F.Just;
+const just    = F.just;
+const Nothing = F.Nothing;
+const nothing = F.nothing;
 
 describe('Just', () => {
     describe('constructor', () => {
@@ -61,6 +63,12 @@ describe('Just', () => {
                 const result = just(5).then(Just.lift(x => x + 3));
                 assert(result instanceof Just);
                 assert.equal(result, 8);
+            });
+
+            it('with lifted nothing', () => {
+                const result = just(5).then(Nothing.lift(x => x + 3));
+                assert(result instanceof Nothing);
+                assert.equal(result, nothing);
             });
         });
 

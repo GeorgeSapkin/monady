@@ -3,16 +3,25 @@
 const assert = require('assert');
 
 class MonadBase {
-    constructor() {
+    constructor(isThenable) {
         // ES6 alternative new.target
         assert.notStrictEqual(this.constructor, MonadBase,
             `Cannot construct ${this.constructor.name} instances directly`);
 
         assert(this.bind instanceof Function, 'Must implement bind method');
-    }
 
-    // emulate Promise API
-    then() { return this.bind.apply(this, arguments); }
+        // emulate Promise API
+        if (isThenable == null)
+            isThenable = true;
+
+        if (isThenable) {
+            // turn monad into a thenable
+            const ctx = this;
+            this.then = function() {
+                return ctx.bind.apply(ctx, arguments);
+            }
+        }
+    }
 
     map(transform) {
         assert(transform instanceof Function, 'transform must be a function');
@@ -38,6 +47,7 @@ class MonadBase {
 
 module.exports.MonadBase = MonadBase;
 
+// Identity
 class Identity extends MonadBase {
     constructor(value) {
         assert(value != null, 'value must be set');
@@ -64,7 +74,18 @@ function identity(val) {
 module.exports.Identity = Identity;
 module.exports.identity = identity;
 
-class Nothing {
+class Nothing extends MonadBase {
+    constructor() {
+        // Nothing is not thenable to break a promise chain
+        super(false);
+    }
+
+    bind() { return this; }
+
+    static lift() { return value => nothing; }
+
+    static lift2() { return (monadA, monadB) => nothing; }
+
     toString() { return this.constructor.name; }
 }
 
