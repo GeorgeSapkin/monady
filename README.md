@@ -7,6 +7,10 @@
 
 Composable monads for functional async flow.
 
+## Name
+
+It's like Monday, but misspelled :) Also, apparently, it's Polish for [monads](https://pl.wikipedia.org/wiki/Monada_(programowanie)).
+
 ## Installation
 
 ```
