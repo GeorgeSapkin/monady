@@ -227,17 +227,6 @@ assert.equal(lifted(5), 8);
 const lifted = RejectWhen.lift2(() => {}, () => {}, (x, y) => x + y);
 assert(lifted(identity(5), identity(3)) instanceof RejectWhen);
 assert.equal(lifted(identity(5), identity(3)), 8);
-
-// Maybe is lifted into RejectWhen context
-const rejectWhenNothing2 = RejectWhen.lift(
-    val => val === nothing,
-    () => new Error('value rejected'),
-    maybe);
-
-const result = rejectWhenNothing2(5).then(
-    val => val + 3,
-    err => assert.ifError(err));
-assert.equal(result, 8);
 ```
 
 #### `map(x => )`
@@ -248,7 +237,45 @@ assert.equal(rejectWhenNothing(5).map(val => val + 2), 7);
 
 ## Examples
 
-Example using generator functions and lifting.
+Rejecting value when it is `Nothing` using `RejectWhen` and `maybe`.
+
+```js
+const rejectWhenNothing = RejectWhen.lift(
+    val => val === nothing,
+    () => new Error('value rejected'),
+    maybe);
+
+const result = rejectWhenNothing(5).then(
+    val => val + 3,
+    err => assert.ifError(err));
+assert.equal(result, 8);
+
+rejectWhenNothing(null /* or nothing or not specified */).then(
+    () => assert(false),
+    err => assert(err instanceof Error)
+);
+```
+
+Rejecting value when it is not set using `RejectWhen` and `either`.
+
+```js
+const rejectWhenError = RejectWhen.lift2(
+    val => val.value instanceof Error,
+    err => err.value,
+    either);
+
+const result = rejectWhenError(new Error(), 5).then(
+    val => val + 3,
+    err => assert.ifError(err));
+assert.equal(result, 8);
+
+rejectWhenError(new Error()).then(
+    () => assert(false),
+    err => assert(err instanceof Error)
+));
+```
+
+Using generator functions and lifting to avoid explicit null checks.
 
 ```js
 function* (next) {
@@ -272,7 +299,7 @@ function* (next) {
 }
 ```
 
-Example using generator functions with [ramda](https://github.com/ramda/ramda) for compose and curry.
+Using generator functions with [ramda](https://github.com/ramda/ramda) for compose and curry to avoid explicit null checks.
 
 ```js
 function* (next) {

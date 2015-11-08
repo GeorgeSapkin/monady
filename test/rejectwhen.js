@@ -5,6 +5,7 @@ const co     = require('co');
 
 const F = require('..');
 
+const either     = F.either;
 const identity   = F.identity;
 const maybe      = F.maybe;
 const nothing    = F.nothing;
@@ -60,12 +61,17 @@ describe('RejectWhen', () => {
 
     const rejectWhenNothing = rejectWhen.bind(null,
         val => val === nothing,
-        ()  => new Error('value rejected'));
+        ()  => new Error());
 
     const rejectWhenNothing2 = RejectWhen.lift(
         val => val === nothing,
-        ()  => new Error('value rejected'),
+        ()  => new Error(),
         maybe);
+
+    const rejectWhenError = RejectWhen.lift2(
+        val => val.value instanceof Error,
+        err => err.value,
+        either);
 
     describe('then', () => {
         describe('should work', () => {
@@ -98,6 +104,13 @@ describe('RejectWhen', () => {
                 assert.equal(result, 8);
             });
 
+            it('when lifted with either right', () => {
+                const result = rejectWhenError(new Error(), 5).then(
+                    val => val + 3,
+                    err => assert.ifError(err));
+                assert.equal(result, 8);
+            });
+
             it('when Promise resolves to not nothing', () => {
                 return rejectWhenNothing(Promise.resolve(5)).then(
                     val => assert.equal(val, 5),
@@ -125,7 +138,31 @@ describe('RejectWhen', () => {
 
             it('when lifted with nothing', () => {
                 assert.doesNotThrow(
+                    () => rejectWhenNothing2(nothing).then(
+                        () => assert(false),
+                        err => assert(err instanceof Error)
+                    ));
+            });
+
+            it('when lifted with null', () => {
+                assert.doesNotThrow(
                     () => rejectWhenNothing2(null).then(
+                        () => assert(false),
+                        err => assert(err instanceof Error)
+                    ));
+            });
+
+            it('when lifted with no args', () => {
+                assert.doesNotThrow(
+                    () => rejectWhenNothing2().then(
+                        () => assert(false),
+                        err => assert(err instanceof Error)
+                    ));
+            });
+
+            it('when lifted with either left', () => {
+                assert.doesNotThrow(
+                    () => rejectWhenError(new Error()).then(
                         () => assert(false),
                         err => assert(err instanceof Error)
                     ));
