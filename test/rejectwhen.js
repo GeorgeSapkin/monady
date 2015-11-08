@@ -3,14 +3,14 @@
 const assert = require('assert');
 const co     = require('co');
 
-const F = require('..');
+const M = require('..');
 
-const either     = F.either;
-const identity   = F.identity;
-const maybe      = F.maybe;
-const nothing    = F.nothing;
-const RejectWhen = F.RejectWhen;
-const rejectWhen = F.rejectWhen;
+const either     = M.either;
+const identity   = M.identity;
+const maybe      = M.maybe;
+const nothing    = M.nothing;
+const RejectWhen = M.RejectWhen;
+const rejectWhen = M.rejectWhen;
 
 describe('RejectWhen', () => {
     describe('constructor', () => {
@@ -36,7 +36,7 @@ describe('RejectWhen', () => {
         });
     });
 
-    describe('factory method', () => {
+    describe('type constructor', () => {
         describe('should work', () => {
             it('with all arguments', () => {
                 assert.doesNotThrow(
@@ -75,21 +75,21 @@ describe('RejectWhen', () => {
 
     describe('then', () => {
         describe('should work', () => {
-            it('with transform', () => {
+            it('on value with transform', () => {
                 const result = rejectWhenNothing(5).then(
                     val => val + 3,
                     err => assert.ifError(err));
                 assert.equal(result, 8);
             });
 
-            it('with maybe and transform', () => {
+            it('on maybe value with transform', () => {
                 const result = rejectWhenNothing(maybe(5)).then(
                     val => val + 3,
                     err => assert.ifError(err));
                 assert.equal(result, 8);
             });
 
-            it('with lifted', () => {
+            it('on value with lifted transform', () => {
                 const result = rejectWhenNothing(5).then(
                     RejectWhen.lift(() => {}, () => {}, x => x + 3),
                     err => assert.ifError(err));
@@ -97,21 +97,21 @@ describe('RejectWhen', () => {
                 assert.equal(result, 8);
             });
 
-            it('when lifted with transform', () => {
+            it('on lifted value with transform', () => {
                 const result = rejectWhenNothing2(5).then(
                     val => val + 3,
                     err => assert.ifError(err));
                 assert.equal(result, 8);
             });
 
-            it('when lifted with either right', () => {
+            it('on lifted either right with transform', () => {
                 const result = rejectWhenError(new Error(), 5).then(
                     val => val + 3,
                     err => assert.ifError(err));
                 assert.equal(result, 8);
             });
 
-            it('when Promise resolves to not nothing', () => {
+            it('on Promise that resolves to not nothing', () => {
                 return rejectWhenNothing(Promise.resolve(5)).then(
                     val => assert.equal(val, 5),
                     err => assert.ifError(err)
@@ -120,7 +120,7 @@ describe('RejectWhen', () => {
         });
 
         describe('should reject', () => {
-            it('when nothing', () => {
+            it('on nothing', () => {
                 assert.doesNotThrow(
                     () => rejectWhenNothing(nothing).then(
                         () => assert(false),
@@ -128,7 +128,7 @@ describe('RejectWhen', () => {
                     ));
             });
 
-            it('when maybe nothing', () => {
+            it('on maybe nothing', () => {
                 assert.doesNotThrow(
                     () => rejectWhenNothing(maybe(nothing)).then(
                         () => assert(false),
@@ -136,7 +136,7 @@ describe('RejectWhen', () => {
                     ));
             });
 
-            it('when lifted with nothing', () => {
+            it('on lifted nothing', () => {
                 assert.doesNotThrow(
                     () => rejectWhenNothing2(nothing).then(
                         () => assert(false),
@@ -144,7 +144,7 @@ describe('RejectWhen', () => {
                     ));
             });
 
-            it('when lifted with null', () => {
+            it('on lifted null', () => {
                 assert.doesNotThrow(
                     () => rejectWhenNothing2(null).then(
                         () => assert(false),
@@ -152,7 +152,7 @@ describe('RejectWhen', () => {
                     ));
             });
 
-            it('when lifted with no args', () => {
+            it('on lifted with no args', () => {
                 assert.doesNotThrow(
                     () => rejectWhenNothing2().then(
                         () => assert(false),
@@ -160,12 +160,26 @@ describe('RejectWhen', () => {
                     ));
             });
 
-            it('when lifted with either left', () => {
+            it('on lifted either left', () => {
                 assert.doesNotThrow(
                     () => rejectWhenError(new Error()).then(
                         () => assert(false),
                         err => assert(err instanceof Error)
                     ));
+            });
+
+            it('on Promise that resolves to nothing', () => {
+                return rejectWhenNothing(Promise.resolve(nothing)).then(
+                    () => assert(false),
+                    err => assert(err instanceof Error)
+                );
+            });
+
+            it('on Promise that resolves to maybe nothing', () => {
+                return rejectWhenNothing(Promise.resolve(maybe(nothing))).then(
+                    () => assert(false),
+                    err => assert(err instanceof Error)
+                );
             });
         });
 
@@ -188,7 +202,7 @@ describe('RejectWhen', () => {
 
     describe('map', () => {
         describe('should work', () => {
-            it('when not nothing', () => {
+            it('on value', () => {
                 const result = rejectWhenNothing(5).map(val => val + 2);
                 assert(result instanceof RejectWhen);
                 assert.equal(result, 7);
@@ -237,7 +251,14 @@ describe('RejectWhen', () => {
 
     describe('lift2', () => {
         describe('should work', () => {
-            it('with transform', () => {
+            it('with transform with values', () => {
+                const lifted = RejectWhen.lift2(() => {}, () => {}, (x, y) => x + y);
+                const result = lifted(5, 3);
+                assert(result instanceof RejectWhen);
+                assert.equal(result, 8);
+            });
+
+            it('with transform with identities', () => {
                 const lifted = RejectWhen.lift2(() => {}, () => {}, (x, y) => x + y);
                 const result = lifted(identity(5), identity(3));
                 assert(result instanceof RejectWhen);

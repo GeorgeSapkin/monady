@@ -3,10 +3,10 @@
 const assert = require('assert');
 const co     = require('co');
 
-const F = require('..');
+const M = require('..');
 
-const Identity = F.Identity;
-const identity = F.identity;
+const Identity = M.Identity;
+const identity = M.identity;
 
 describe('Identity', () => {
     describe('constructor', () => {
@@ -27,7 +27,7 @@ describe('Identity', () => {
         });
     });
 
-    describe('create through factory method', () => {
+    describe('type constructor', () => {
         describe('should work', () => {
             it('with value', () => {
                 assert.doesNotThrow(() => identity(5));
@@ -57,7 +57,7 @@ describe('Identity', () => {
                 assert.equal(identity(5).then(a => a + 3), 8);
             });
 
-            it('with lifted', () => {
+            it('with lifted transform', () => {
                 const result = identity(5).then(Identity.lift(x => x + 3));
                 assert(result instanceof Identity);
                 assert.equal(result, 8);
@@ -118,7 +118,14 @@ describe('Identity', () => {
 
     describe('lift2', () => {
         describe('should work', () => {
-            it('with transform', () => {
+            it('with transform and values', () => {
+                const lifted = Identity.lift2((x, y) => x + y);
+                const result = lifted(5, 3);
+                assert(result instanceof Identity);
+                assert.equal(result, 8);
+            });
+
+            it('with transform and identities', () => {
                 const lifted = Identity.lift2((x, y) => x + y);
                 const result = lifted(identity(5), identity(3));
                 assert(result instanceof Identity);

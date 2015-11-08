@@ -3,10 +3,11 @@
 const assert = require('assert');
 const co     = require('co');
 
-const F = require('..');
+const M = require('..');
 
-const Either = F.Either;
-const either = F.either;
+const Either   = M.Either;
+const either   = M.either;
+const identity = M.identity;
 
 describe('Either', () => {
     describe('constructor', () => {
@@ -27,7 +28,7 @@ describe('Either', () => {
         });
     });
 
-    describe('create through factory method', () => {
+    describe('type constructor', () => {
         describe('should work', () => {
             it('with left', () => {
                 assert.doesNotThrow(() => either(5));
@@ -97,6 +98,7 @@ describe('Either', () => {
                 assert(result instanceof Either);
                 assert.equal(result, 8);
             });
+
             it('should transform right', () => {
                 const result = either(5, 7).map(a => a + 3);
                 assert(result instanceof Either);
@@ -137,21 +139,19 @@ describe('Either', () => {
     });
 
     describe('lift2', () => {
-        describe('should transform left', () => {
-            it('with transform', () => {
+        describe('should work', () => {
+            it('with transform and values', () => {
                 const lifted = Either.lift2((x, y) => x + y);
-                const result = lifted(either(5), either(3));
+                const result = lifted(5, 3);
                 assert(result instanceof Either);
                 assert.equal(result, 8);
             });
-        });
 
-        describe('should transform right', () => {
-            it('with transform', () => {
+            it('with transform and identities', () => {
                 const lifted = Either.lift2((x, y) => x + y);
-                const result = lifted(either(5, 7), either(3, 5));
+                const result = lifted(identity(5), identity(3));
                 assert(result instanceof Either);
-                assert.equal(result, 12);
+                assert.equal(result, 8);
             });
         });
 

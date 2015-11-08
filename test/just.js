@@ -3,12 +3,13 @@
 const assert = require('assert');
 const co     = require('co');
 
-const F = require('..');
+const M = require('..');
 
-const Just    = F.Just;
-const just    = F.just;
-const Nothing = F.Nothing;
-const nothing = F.nothing;
+const Just     = M.Just;
+const just     = M.just;
+const identity = M.identity;
+const Nothing  = M.Nothing;
+const nothing  = M.nothing;
 
 describe('Just', () => {
     describe('constructor', () => {
@@ -29,7 +30,7 @@ describe('Just', () => {
         });
     });
 
-    describe('factory method', () => {
+    describe('type constructor', () => {
         describe('should work', () => {
             it('with value', () => {
                 assert.doesNotThrow(() => just(5));
@@ -126,9 +127,16 @@ describe('Just', () => {
 
     describe('lift2', () => {
         describe('should work', () => {
-            it('with transform', () => {
+            it('with transform and values', () => {
                 const lifted = Just.lift2((x, y) => x + y);
-                const result = lifted(just(5), just(3));
+                const result = lifted(5, 3);
+                assert(result instanceof Just);
+                assert.equal(result, 8);
+            });
+
+            it('with transform and identities', () => {
+                const lifted = Just.lift2((x, y) => x + y);
+                const result = lifted(identity(5), identity(3));
                 assert(result instanceof Just);
                 assert.equal(result, 8);
             });

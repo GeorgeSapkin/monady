@@ -18,7 +18,7 @@ describe('Maybe', () => {
         });
     });
 
-    describe('factory method', () => {
+    describe('type constructor', () => {
         describe('should return Just', () => {
             it('with same value', () => {
                 const m = maybe(5);

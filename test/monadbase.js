@@ -2,9 +2,9 @@
 
 const assert = require('assert');
 
-const F = require('..');
+const M = require('..');
 
-const MonadBase = F.MonadBase;
+const MonadBase = M.MonadBase;
 
 describe('MonadBase', () => {
     function getGoodMonad() {

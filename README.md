@@ -49,8 +49,8 @@ assert.equal(identity(5).then(lifted), 8);
 #### `lift2((x, y) => )`
 ```js
 const lifted = Identity.lift2((x, y) => x + y);
-assert(lifted(identity(5), identity(3)) instanceof Identity);
-assert.equal(lifted(identity(5), identity(3)), 8);
+assert(lifted(5, 3) instanceof Identity);
+assert.equal(lifted(5, 3), 8);
 ```
 
 #### `map(x => )`
@@ -112,12 +112,12 @@ assert.equal(just(5).then(lifted2), nothing);
 #### `lift2((x, y) => )`
 ```js
 const lifted1 = Just.lift2((x, y) => x + y);
-assert(lifted1(just(5), just(3)) instanceof Just);
-assert.equal(lifted1(just(5), just(3)), 8);
+assert(lifted1(5, 3) instanceof Just);
+assert.equal(lifted1(5, 3), 8);
 
 const lifted2 = Nothing.lift2((x, y) => x + y);
-assert(lifted2(identity(5), identity(3)) instanceof Nothing);
-assert.equal(lifted2(identity(5), identity(3)), nothing);
+assert(lifted2(5, 3) instanceof Nothing);
+assert.equal(lifted2(5, 3), nothing);
 ```
 
 #### `map(x => )`
@@ -162,11 +162,8 @@ assert.equal(either(5, 7).then(lifted), 10);
 #### `lift2((x, y) => )`
 ```js
 const lifted = Either.lift2((x, y) => x + y);
-assert( lifted(either(5), either(3)) instanceof Either);
-assert.equal( lifted(either(5), either(3)), 8);
-
-assert(lifted(either(5, 7), either(3, 5)) instanceof Either);
-assert.equal(lifted(either(5, 7), either(3, 5)), 12);
+assert(lifted(5, 3) instanceof Either);
+assert.equal(lifted(5, 3), 8);
 ```
 
 #### `map(x => )`
@@ -224,8 +221,8 @@ assert.equal(lifted(5), 8);
 #### `lift2((x, y) => )`
 ```js
 const lifted = RejectWhen.lift2(() => {}, () => {}, (x, y) => x + y);
-assert(lifted(identity(5), identity(3)) instanceof RejectWhen);
-assert.equal(lifted(identity(5), identity(3)), 8);
+assert(lifted(5, 3) instanceof RejectWhen);
+assert.equal(lifted(5, 3), 8);
 ```
 
 #### `map(x => )`
