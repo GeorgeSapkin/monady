@@ -9,8 +9,31 @@ Composable monads for functional async flow
 
 ## Examples
 
-Example using generator functions with [koa](https://github.com/koajs/koa) and [ramda](https://github.com/ramda/ramda) for compose
-and curry:
+Example using generator functions and lift syntax
+
+```js
+function* (next) {
+    const req = this.request;
+
+    // Lift Maybe into RejectWhen context
+    const rejectWhenNothing = RejectWhen.lift(
+        val => val === nothing,
+        () => new Error('value rejected'),
+        maybe);
+
+    const user = yield rejectWhenNothing(userProvider.findOne({
+        name: req.body.username
+    });
+
+    // If user is not found Maybe will return nothing and be rejected by
+    // RejectWhen so code after yield will not run. Hence no check if user
+    // exists is needed.
+
+    // Do something with user
+}
+```
+
+Example using generator functions with [ramda](https://github.com/ramda/ramda) for compose and curry:
 
 ```js
 function* (next) {
@@ -29,9 +52,9 @@ function* (next) {
 
     const user = yield getUser({ name: req.body.username });
 
-    // If user is not found maybe will return nothing and be rejected by
-    // rejectWhenNothing so code after yield will not run. Hence no check if
-    // user exists is needed.
+    // If user is not found Maybe will return nothing and be rejected by
+    // RejectWhen so code after yield will not run. Hence no check if user
+    // exists is needed.
 
     // Do something with user
 }
