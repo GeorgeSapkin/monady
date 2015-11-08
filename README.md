@@ -21,10 +21,9 @@ $ npm install monady
 
 ### Identity
 
-#### `identity(x)`
-
 `Identity` always has a value.
 
+#### `identity(x)` type constructor
 ```js
 assert.equal(identity(5), 5);
 assert.throws(() => identity());
@@ -61,12 +60,11 @@ assert.equal(identity(5).map(a => a + 3), 8);
 
 ### Maybe, Just and Nothing
 
-#### `maybe(x)`
+`Maybe` resolves to either `Just` or `Nothing` depending on whether a value is passed to the type constructor. `Nothing` is not thenable but can be bound, lifted or mapped.
+
+#### `maybe(x)` type constructor
 #### `just(x)`
 #### `nothing`
-
-`Maybe` resolves to either `Just` or `Nothing` depending on whether a value is passed to the unit function. `Nothing` is not thenable but can be bound, lifted or mapped.
-
 ```js
 assert(maybe(5) instanceof Just);
 assert.equal(maybe(5), 5);
@@ -130,10 +128,9 @@ assert.equal(nothing.map(a => a), nothing);
 
 ### Either
 
-#### `either(left, right)`
-
 `Either` returns either `left` (default) or `right`, if it is set.
 
+#### `either(left, right)` type constructor
 ```js
 assert.equal(either(5), 5);
 assert.equal(either(5, 7), 7);
@@ -177,9 +174,9 @@ assert.equal(either(5, 7).map(a => a + 3), 10);
 
 ### RejectWhen
 
-#### `rejectWhen(when, error, value)`
-
 `RejectWhen` rejects a value on `bind` (or `then`) with `error` when condition `when` is met.
+
+#### `rejectWhen(when, error, value)` type constructor
 
 #### `bind(x => )` or `then(x => )`
 ```js
