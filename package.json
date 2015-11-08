@@ -1,6 +1,6 @@
 {
   "name": "monady",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "author": "George Sapkin",
   "description": "Composable monads for functional async flow",
   "license": "MIT",
