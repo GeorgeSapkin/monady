@@ -23,7 +23,7 @@ describe('Maybe', () => {
             it('with same value', () => {
                 const m = maybe(5);
                 assert(m instanceof Just);
-                assert.equal(m.value, 5);
+                assert.equal(m, 5);
             });
         });
 

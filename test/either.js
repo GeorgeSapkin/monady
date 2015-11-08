@@ -47,10 +47,10 @@ describe('Either', () => {
 
     describe('get value', () => {
         it('should return left', () => {
-            assert.equal(either(5).value, 5);
+            assert.equal(either(5), 5);
         });
         it('should return right', () => {
-            assert.equal(either(5, 7).value, 7);
+            assert.equal(either(5, 7), 7);
         });
     });
 

@@ -47,7 +47,7 @@ describe('Just', () => {
 
     describe('get value', () => {
         it('should return same value', () => {
-            assert.equal(just(5).value, 5);
+            assert.equal(just(5), 5);
         });
     });
 

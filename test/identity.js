@@ -47,7 +47,7 @@ describe('Identity', () => {
 
     describe('get value', () => {
         it('should return same value', () => {
-            assert.equal(identity(5).value, 5);
+            assert.equal(identity(5), 5);
         });
     });
 
