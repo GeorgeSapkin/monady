@@ -62,10 +62,22 @@ describe('RejectWhen', () => {
         val => val === nothing,
         ()  => new Error('value rejected'));
 
+    const rejectWhenNothing2 = RejectWhen.lift(
+        val => val === nothing,
+        ()  => new Error('value rejected'),
+        maybe);
+
     describe('then', () => {
         describe('should work', () => {
             it('with transform', () => {
                 const result = rejectWhenNothing(5).then(
+                    val => val + 3,
+                    err => assert.ifError(err));
+                assert.equal(result, 8);
+            });
+
+            it('with maybe and transform', () => {
+                const result = rejectWhenNothing(maybe(5)).then(
                     val => val + 3,
                     err => assert.ifError(err));
                 assert.equal(result, 8);
@@ -76,6 +88,13 @@ describe('RejectWhen', () => {
                     RejectWhen.lift(() => {}, () => {}, x => x + 3),
                     err => assert.ifError(err));
                 assert(result instanceof RejectWhen);
+                assert.equal(result, 8);
+            });
+
+            it('when lifted with transform', () => {
+                const result = rejectWhenNothing2(5).then(
+                    val => val + 3,
+                    err => assert.ifError(err));
                 assert.equal(result, 8);
             });
 
@@ -99,6 +118,14 @@ describe('RejectWhen', () => {
             it('when maybe nothing', () => {
                 assert.doesNotThrow(
                     () => rejectWhenNothing(maybe(nothing)).then(
+                        () => assert(false),
+                        err => assert(err instanceof Error)
+                    ));
+            });
+
+            it('when lifted with nothing', () => {
+                assert.doesNotThrow(
+                    () => rejectWhenNothing2(null).then(
                         () => assert(false),
                         err => assert(err instanceof Error)
                     ));
