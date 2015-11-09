@@ -32,13 +32,13 @@ class Monad {
     static lift(transform) {
         assert(transform instanceof Function, 'transform must be a function');
 
-        return value => new this(transform(value));
+        return value => Object.freeze(new this(transform(value)));
     }
 
     static lift2(transform) {
         assert(transform instanceof Function, 'transform must be a function');
 
-        return (a, b) => new this(_bind(a, b, transform));
+        return (a, b) => Object.freeze(new this(_bind(a, b, transform)));
     }
 }
 
@@ -54,6 +54,7 @@ class Identity extends Monad {
     }
 
     get value() { return this._value; }
+    valueOf()   { return this.value; }
 
     bind(transform) {
         assert(transform instanceof Function, 'transform must be a function');
@@ -65,7 +66,7 @@ class Identity extends Monad {
 }
 
 function identity(val) {
-    return new Identity(val);
+    return Object.freeze(new Identity(val));
 }
 
 module.exports.Identity = Identity;
@@ -89,6 +90,7 @@ class Maybe extends Monad {
     get value()     { return this.val; }
     get isJust()    { return this.value !== undefined; }
     get isNothing() { return !this.isJust; }
+    valueOf()       { return this.value; }
 
     bind(transform) {
         assert(transform instanceof Function, 'transform must be a function');
@@ -101,10 +103,10 @@ class Maybe extends Monad {
 
 // data constructor
 function just(val) {
-    return new Maybe(val);
+    return Object.freeze(new Maybe(val));
 }
 
-const nothing = new Maybe();
+const nothing = Object.freeze(new Maybe());
 
 module.exports.just    = just;
 module.exports.nothing = nothing;
@@ -125,9 +127,8 @@ class Either extends Monad {
         this.right = right;
     }
 
-    get value() {
-        return this.right != null ? this.right : this.left;
-    }
+    get value() { return this.right != null ? this.right : this.left; }
+    valueOf()   { return this.value; }
 
     bind(transform) {
         assert(transform instanceof Function, 'transform must be a function');
@@ -183,7 +184,8 @@ class RejectWhen extends Identity {
         const error = this.error;
         const value = this.value;
 
-        return new this.constructor(when, error, transform(value));
+        return Object.freeze(
+            new this.constructor(when, error, transform(value)));
     }
 
     static lift(when, error, transform) {
@@ -191,7 +193,8 @@ class RejectWhen extends Identity {
         assert(error instanceof Function, 'error must be a function');
         assert(transform instanceof Function, 'transform must be a function');
 
-        return value => new this(when, error, transform(value));
+        return value => Object.freeze(
+            new this(when, error, transform(value)));
     }
 
     static lift2(when, error, transform) {
@@ -199,7 +202,8 @@ class RejectWhen extends Identity {
         assert(error instanceof Function, 'error must be a function');
         assert(transform instanceof Function, 'transform must be a function');
 
-        return (a, b) => new this(when, error, _bind(a, b, transform));
+        return (a, b) => Object.freeze(
+            new this(when, error, _bind(a, b, transform)));
     }
 }
 
@@ -214,7 +218,7 @@ function _bind(a, b, transform) {
 }
 
 function rejectWhen(when, error, value) {
-    return new RejectWhen(when, error, value);
+    return Object.freeze(new RejectWhen(when, error, value));
 }
 
 module.exports.RejectWhen = RejectWhen;
