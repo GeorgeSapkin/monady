@@ -5,6 +5,8 @@ const co     = require('co');
 
 const M = require('..');
 
+const obeyTheLaw = require('./law');
+
 const Either   = M.Either;
 const either   = M.either;
 const identity = M.identity;
@@ -196,4 +198,6 @@ describe('Either', () => {
             });
         });
     });
+
+    obeyTheLaw(Either, either);
 });

@@ -5,6 +5,8 @@ const co     = require('co');
 
 const M = require('..');
 
+const obeyTheLaw = require('./law');
+
 const Just     = M.Just;
 const just     = M.just;
 const identity = M.identity;
@@ -171,4 +173,6 @@ describe('Just', () => {
             });
         });
     });
+
+    obeyTheLaw(Just, just);
 });

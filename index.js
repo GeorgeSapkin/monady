@@ -2,10 +2,10 @@
 
 const assert = require('assert');
 
-class MonadBase {
+class Monad {
     constructor(isThenable) {
         // ES6 alternative new.target
-        assert.notStrictEqual(this.constructor, MonadBase,
+        assert.notStrictEqual(this.constructor, Monad,
             `Cannot construct ${this.constructor.name} instances directly`);
 
         assert(this.bind instanceof Function, 'Must implement bind method');
@@ -42,10 +42,10 @@ class MonadBase {
     }
 }
 
-module.exports.MonadBase = MonadBase;
+module.exports.Monad = Monad;
 
 // Identity
-class Identity extends MonadBase {
+class Identity extends Monad {
     constructor(value) {
         assert(value != null, 'value must be set');
 
@@ -71,11 +71,13 @@ function identity(val) {
 module.exports.Identity = Identity;
 module.exports.identity = identity;
 
-class Nothing extends MonadBase {
+class Nothing extends Monad {
     constructor() {
         // Nothing is not thenable to break a promise chain
         super(false);
     }
+
+    get value() { return this; }
 
     bind() { return this; }
 
@@ -88,8 +90,14 @@ class Nothing extends MonadBase {
 
 const nothing = new Nothing();
 
-module.exports.Nothing = Nothing;
-module.exports.nothing = nothing;
+/**
+ * Helper type constructor
+ */
+function _nothing() { return new Nothing(); }
+
+module.exports.Nothing  = Nothing;
+module.exports.nothing  = nothing;
+module.exports._nothing = _nothing;
 
 class Just extends Identity {}
 
@@ -120,7 +128,7 @@ function maybe(val) {
 module.exports.Maybe = Maybe;
 module.exports.maybe = maybe;
 
-class Either extends MonadBase {
+class Either extends Monad {
     constructor(left, right) {
         assert(left != null);
 

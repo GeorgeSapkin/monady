@@ -4,11 +4,11 @@ const assert = require('assert');
 
 const M = require('..');
 
-const MonadBase = M.MonadBase;
+const Monad = M.Monad;
 
-describe('MonadBase', () => {
+describe('Monad', () => {
     function getGoodMonad() {
-        return new (class extends MonadBase {
+        return new (class extends Monad {
             bind() {}
             map()  {}
         });
@@ -16,14 +16,14 @@ describe('MonadBase', () => {
 
     describe('abstruct constructor', () => {
         it('should throw', () => {
-            assert.throws(() => new MonadBase());
+            assert.throws(() => new Monad());
         });
     });
 
     describe('derived constructor', () => {
         describe('on a bad implementation', () => {
             it('should throw', () => {
-                assert.throws(() => new (class extends MonadBase {}));
+                assert.throws(() => new (class extends Monad {}));
             });
         });
 
