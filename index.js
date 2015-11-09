@@ -90,14 +90,8 @@ class Nothing extends Monad {
 
 const nothing = new Nothing();
 
-/**
- * Helper type constructor
- */
-function _nothing() { return new Nothing(); }
-
 module.exports.Nothing  = Nothing;
 module.exports.nothing  = nothing;
-module.exports._nothing = _nothing;
 
 class Just extends Identity {}
 
