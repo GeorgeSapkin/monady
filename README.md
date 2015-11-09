@@ -60,23 +60,23 @@ assert.equal(identity(5).map(a => a + 3), 8);
 
 ### Maybe, Just and Nothing
 
-`Maybe` resolves to either `Just` or `Nothing` depending on whether a value is passed to the type constructor. `Nothing` is not thenable but can be bound, lifted or mapped.
+`maybe` resolves to either `just` or `nothing` depending on whether a value is passed to the type constructor. `Nothing` is not thenable.
 
 #### `maybe(x)` type constructor
 #### `just(x)`
 #### `nothing`
 ```js
-assert(maybe(5) instanceof Just);
+assert(maybe(5).isJust);
 assert.equal(maybe(5), 5);
 assert.equal(just(5), 5);
 
-assert(maybe(nothing) instanceof Nothing);
+assert(maybe(nothing).isNothing);
 assert.equal(maybe(nothing), nothing);
 
-assert(maybe(null) instanceof Nothing);
+assert(maybe(null).isNothing);
 assert.equal(maybe(null), nothing);
 
-assert(maybe() instanceof Nothing);
+assert(maybe().isNothing);
 assert.equal(maybe(), nothing);
 ```
 
@@ -84,7 +84,7 @@ assert.equal(maybe(), nothing);
 ```js
 assert.equal(just(5).then(a => a + 3), 8);
 
-assert.strictEqual(nothing.bind(), nothing);
+assert.strictEqual(nothing.bind(a => a + 3), nothing);
 
 // nothing is not thenable
 assert.throws(() => nothing.then(a => a), TypeError);
@@ -92,35 +92,24 @@ assert.throws(() => nothing.then(a => a), TypeError);
 
 #### `lift(x => )`
 ```js
-const lifted1 = Just.lift(x => x + 3);
-assert(lifted1(5) instanceof Just);
+const lifted1 = Maybe.lift(x => x + 3);
+assert(lifted1(5).isJust);
 assert.equal(lifted1(5), 8);
 
-assert(just(5).then(lifted1) instanceof Just);
+assert(just(5).then(lifted1).isJust);
 assert.equal(just(5).then(lifted1), 8);
-
-const lifted2 = Nothing.lift(x => x + 3);
-assert(lifted2(5) instanceof Nothing);
-assert.equal(lifted2(5), nothing);
-
-assert(just(5).then(lifted2) instanceof Nothing);
-assert.equal(just(5).then(lifted2), nothing);
 ```
 
 #### `lift2((x, y) => )`
 ```js
-const lifted1 = Just.lift2((x, y) => x + y);
-assert(lifted1(5, 3) instanceof Just);
+const lifted1 = Maybe.lift2((x, y) => x + y);
+assert(lifted1(5, 3).isJust);
 assert.equal(lifted1(5, 3), 8);
-
-const lifted2 = Nothing.lift2((x, y) => x + y);
-assert(lifted2(5, 3) instanceof Nothing);
-assert.equal(lifted2(5, 3), nothing);
 ```
 
 #### `map(x => )`
 ```js
-assert(just(5).map(a => a + 3) instanceof Just);
+assert(just(5).map(a => a + 3).isJust);
 assert.equal(just(5).map(a => a + 3), 8);
 
 assert.equal(nothing.map(a => a), nothing);
