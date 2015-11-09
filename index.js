@@ -71,52 +71,46 @@ function identity(val) {
 module.exports.Identity = Identity;
 module.exports.identity = identity;
 
-class Nothing extends Monad {
-    constructor() {
-        // Nothing is not thenable to break a promise chain
-        super(false);
-    }
-
-    get value() { return this; }
-
-    bind() { return this; }
-
-    static lift() { return () => nothing; }
-
-    static lift2() { return () => nothing; }
-
-    toString() { return this.constructor.name; }
-}
-
-const nothing = new Nothing();
-
-module.exports.Nothing  = Nothing;
-module.exports.nothing  = nothing;
-
-class Just extends Identity {}
-
-function just(val) { return new Just(val); }
-
-module.exports.Just = Just;
-module.exports.just = just;
-
 function isPromise(val) {
     return val != null
         && val.constructor.name === 'Promise'
         && val.then !== 'undefined';
 }
 
-class Maybe {
+class Maybe extends Monad {
     constructor(val) {
         // catches both undefined and null
-        return val != null && val !== nothing ? just(val) : nothing;
+        const hasValue = val != null;
+        super(hasValue);
+        if (hasValue)
+            this.val = val;
     }
+
+    get value()     { return this.val; }
+    get isJust()    { return this.value !== undefined; }
+    get isNothing() { return !this.isJust; }
+
+    bind(transform) {
+        assert(transform instanceof Function, 'transform must be a function');
+
+        return this.isJust ? transform(this.value) : this;
+    }
+
+    toString() { return this.isJust ? this.value.toString() : 'Nothing'; }
 }
 
-function maybe(val) {
-    if (isPromise(val))
-        return val.then(result => maybe(result), () => nothing);
+// data constructor
+function just(val) {
     return new Maybe(val);
+}
+
+const nothing = new Maybe();
+
+module.exports.just    = just;
+module.exports.nothing = nothing;
+
+function maybe(val) {
+    return val != null && val !== nothing ? just(val) : nothing;
 }
 
 module.exports.Maybe = Maybe;
