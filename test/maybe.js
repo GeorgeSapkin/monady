@@ -5,7 +5,8 @@ const co     = require('co');
 
 const M = require('..');
 
-const obeyTheLaw = require('./law');
+const obeyTheLaw       = require('./law');
+const obeyZeroPlusLaws = require('./law').zeroPlusLaws;
 
 const identity = M.identity;
 const just     = M.just;
@@ -256,4 +257,5 @@ describe('Maybe', () => {
     });
 
     obeyTheLaw(Maybe, maybe);
+    obeyZeroPlusLaws(Maybe, maybe);
 });

@@ -26,3 +26,29 @@ module.exports = (Type, unit) => {
         });
     });
 }
+
+module.exports.zeroPlusLaws = (Type, unit) => {
+    const mzero = Type.zero;
+
+    describe('should obey zero and plus', () => {
+        it ('mzero >>= f ≡ mzero', () => {
+            const f = x => x + 3;
+            assert.strictEqual(mzero.bind(f), mzero);
+        });
+
+        it ('m >>= (\\x -> mzero) ≡ mzero', () => {
+            const m = unit(5);
+            assert.strictEqual(m.bind(() => mzero), mzero);
+        });
+
+        it ('mzero `mplus` m ≡ m', () => {
+            const m = unit(5);
+            assert.strictEqual(mzero.plus(m), m);
+        });
+
+        it ('m `mplus` mzero ≡ m', () => {
+            const m = unit(5);
+            assert.strictEqual(m.plus(mzero), m);
+        });
+    });
+}

@@ -16,10 +16,7 @@ class Monad {
 
         if (isThenable) {
             // turn monad into a thenable
-            const ctx = this;
-            this.then = function() {
-                return ctx.bind.apply(ctx, arguments);
-            }
+            this.then = (...args) => this.bind(...args);
         }
     }
 
@@ -44,7 +41,17 @@ class Monad {
 
 module.exports.Monad = Monad;
 
-// Identity
+class MonadPlus extends Monad {
+    constructor(isThenable) {
+        super(isThenable);
+
+        assert.notStrictEqual(this.constructor, MonadPlus,
+            `Cannot construct ${this.constructor.name} instances directly`);
+
+        assert(this.plus instanceof Function, 'Must implement plus method');
+    }
+}
+
 class Identity extends Monad {
     constructor(value) {
         assert(value != null, 'value must be set');
@@ -78,7 +85,7 @@ function isPromise(val) {
         && val.then !== 'undefined';
 }
 
-class Maybe extends Monad {
+class Maybe extends MonadPlus {
     constructor(val) {
         // catches both undefined and null
         const hasValue = val != null;
@@ -91,6 +98,12 @@ class Maybe extends Monad {
     get isJust()    { return this.value !== undefined; }
     get isNothing() { return !this.isJust; }
     valueOf()       { return this.value; }
+
+    plus(maybe) {
+        assert(maybe instanceof Maybe);
+
+        return this.isJust ? this : maybe;
+    }
 
     bind(transform) {
         assert(transform instanceof Function, 'transform must be a function');
@@ -106,7 +119,7 @@ function just(val) {
     return Object.freeze(new Maybe(val));
 }
 
-const nothing = Object.freeze(new Maybe());
+const nothing = Maybe.zero = Object.freeze(new Maybe());
 
 module.exports.just    = just;
 module.exports.nothing = nothing;
