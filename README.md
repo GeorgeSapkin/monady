@@ -60,7 +60,7 @@ assert.equal(identity(5).map(a => a + 3), 8);
 
 ### Maybe, Just and Nothing
 
-`maybe` resolves to either `just` or `nothing` depending on whether a value is passed to the type constructor. `Nothing` is not thenable.
+`maybe` resolves to either `just` or `nothing` depending on whether a value is passed to the type constructor. `nothing` is not thenable.
 
 #### `maybe(x)` type constructor
 #### `just(x)`
@@ -159,6 +159,45 @@ assert.equal(either(5).map(a => a + 3), 8);
 
 assert(either(5, 7).map(a => a + 3) instanceof Either);
 assert.equal(either(5, 7).map(a => a + 3), 10);
+```
+
+### List
+
+`List` represents computations which may return 0, 1, or more possible results. `List` is not thenable.
+
+#### `list(...args)` type constructor
+```js
+assert.deepEqual(list(5), [5]);
+assert.deepEqual(list(5, 7, 11), [5, 7, 11]);
+assert.deepEqual(list(), []);
+```
+
+#### `bind(x => )`
+```js
+assert.deepEqual(list(5, 7, 11).bind(a => a + 3), [8, 10, 14]);
+```
+
+#### `lift(x => )`
+```js
+const lifted = List.lift(x => x + 3);
+assert(lifted(5) instanceof List);
+assert.equal(lifted(5), 8);
+
+assert(list(5).then(lifted) instanceof List);
+assert.equal(list(5).then(lifted), 8);
+```
+
+#### `lift2((x, y) => )`
+```js
+const lifted = List.lift2((x, y) => x + y);
+assert(lifted(5, 3) instanceof List);
+assert.equal(lifted(5, 3), 8);
+```
+
+#### `map(x => )`
+```js
+assert(list(5, 7).map(a => a + 3) instanceof List);
+assert.deepEqual(list(5, 7).map(a => a + 3), [8, 10]);
 ```
 
 ### RejectWhen

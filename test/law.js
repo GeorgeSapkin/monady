@@ -6,8 +6,8 @@ module.exports = (Type, unit) => {
     describe('should obey', () => {
         it('left identity: return a >>= f ≡ f a', () => {
             const a = 5;
-            const f = x => x + 3;
-            assert.strictEqual(unit(a).bind(f), f(a));
+            const f = x => [x + 3];
+            assert.deepEqual(unit(a).bind(f), f(a));
         });
 
         it('right identity: m >>= return ≡ m', () => {
@@ -33,22 +33,29 @@ module.exports.zeroPlusLaws = (Type, unit) => {
     describe('should obey zero and plus', () => {
         it ('mzero >>= f ≡ mzero', () => {
             const f = x => x + 3;
-            assert.strictEqual(mzero.bind(f), mzero);
+            assert.deepEqual(mzero.bind(f), mzero);
         });
 
         it ('m >>= (\\x -> mzero) ≡ mzero', () => {
             const m = unit(5);
-            assert.strictEqual(m.bind(() => mzero), mzero);
+            assert.deepEqual(m.bind(() => mzero), mzero);
         });
 
         it ('mzero `mplus` m ≡ m', () => {
             const m = unit(5);
-            assert.strictEqual(mzero.plus(m), m);
+            assert.deepEqual(mzero.plus(m), m);
         });
 
         it ('m `mplus` mzero ≡ m', () => {
             const m = unit(5);
-            assert.strictEqual(m.plus(mzero), m);
+            assert.deepEqual(m.plus(mzero), m);
+        });
+
+        it ('m `mplus` (n `mplus` o) ≡ (m `mplus` n) `mplus` o', () => {
+            const m = unit(3);
+            const n = unit(5);
+            const o = unit(7);
+            assert.deepEqual(m.plus(n.plus(o)), (m.plus(n)).plus(o));
         });
     });
 }

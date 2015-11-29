@@ -19,25 +19,30 @@ class Monad {
             this.then = (...args) => this.bind(...args);
         }
     }
-
-    map(transform) {
-        assert(transform instanceof Function, 'transform must be a function');
-
-        return this.bind(this.constructor.lift(transform));
-    }
-
-    static lift(transform) {
-        assert(transform instanceof Function, 'transform must be a function');
-
-        return value => Object.freeze(new this(transform(value)));
-    }
-
-    static lift2(transform) {
-        assert(transform instanceof Function, 'transform must be a function');
-
-        return (a, b) => Object.freeze(new this(_bind(a, b, transform)));
-    }
 }
+
+function lift(transform) {
+    assert(transform instanceof Function, 'transform must be a function');
+
+    return value => Object.freeze(new this(transform(value)));
+}
+
+function lift2(transform) {
+    assert(transform instanceof Function, 'transform must be a function');
+
+    return (a, b) => Object.freeze(new this(_bind(a, b, transform)));
+}
+
+function map(transform) {
+    assert(transform instanceof Function, 'transform must be a function');
+
+    return this.bind(this.constructor.lift(transform));
+}
+
+Monad.lift  = lift;
+Monad.lift2 = lift2;
+
+Monad.prototype.map = map;
 
 module.exports.Monad = Monad;
 
@@ -158,6 +163,39 @@ function either(left, right) { return new Either(left, right); }
 
 module.exports.Either = Either;
 module.exports.either = either;
+
+class List extends Array {
+    constructor(...args) {
+        // one argument is a special case for Array
+        if (args.length === 1) {
+            super(1);
+            this[0] = args[0];
+        }
+        else
+            super(...args);
+    }
+
+    bind(transform) {
+        assert(transform instanceof Function, 'transform must be a function');
+
+        return new List(...[].concat(...super.map(transform)));
+    }
+
+    plus(...args) { return new List(...this.concat(...args)); }
+}
+
+List.zero  = Object.freeze(new List());
+List.lift  = lift;
+List.lift2 = lift2;
+
+List.prototype.map = map;
+
+function list(...args) {
+    return Object.freeze(new List(...args));
+}
+
+module.exports.List = List;
+module.exports.list = list;
 
 class RejectWhen extends Identity {
     constructor(when, error, value) {
